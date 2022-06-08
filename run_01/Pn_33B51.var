@@ -1,0 +1,49 @@
+Corn growth simulation for  Pn_33B51   variety 
+ Juvenile   Daylength   StayGreen  LA_min  Rmax_LTAR              Rmax_LTIR                Phyllochrons from 
+ leaves     Sensitive               Leaf tip appearance   Leaf tip initiation       TassellInit
+ 18            1             3             110           0.53          0.978         3 
+[SoilRoot]
+*** WATER UPTAKE PARAMETER INFORMATION **************************
+ RRRM       RRRY    RVRL
+ 166.7         31.3          0.73 
+ ALPM    ALPY     RTWL    RtMinWtPerUnitArea
+ 0.55          0.04          0.0001059     0.0002 
+[RootDiff]
+ *** ROOT MOVER PARAMETER INFORMATION ***
+EPSI        lUpW             CourMax
+ 1             1             1 
+Diffusivity and geotropic velocity
+ 25            2.5           0 
+[SoilNitrogen]
+*** NITROGEN ROOT UPTAKE PARAMETER INFORMATION **************************
+ISINK    Rroot         
+ 1             0.017 
+ConstI   Constk     Cmin0 
+ 35            0.5           0.01 
+ 17.2          0.75          0.03 
+[Gas_Exchange Species Parameters] 
+**** for photosynthesis calculations ***
+EaVp    EaVc    Eaj     Hj      Sj     Vpm25   Vcm25    Jm25    Rd25    Ear       g0    g1
+75100   55900   32800   220000  702.6   70      50       325    2       39800   0.017   4.53
+*** Second set of parameters for Photosynthesis ****
+f (spec_correct)     scatt  Kc25    Ko25    Kp25    gbs         gi      gamma1
+0.15                 0.15   650      450    80      0.003       1       0.193
+**** Third set of photosynthesis parameters ****
+Gamma_gsw  sensitivity (sf) Reference_Potential_(phyla, bars) stomaRatio widthFact lfWidth (m)
+  10.0        2.3               -1.2                             1.0        0.72   0.050
+**** Secondary parameters for miscelanious equations ****
+internal_CO2_Ratio   SC_param      BLC_param
+0.7                   1.57           1.36
+***** Q10 parameters for respiration and leaf senescence
+Q10MR            Q10LeafSenescense
+2.0                     2.0
+**** parameters for calculating the rank of the largest leaf and potential length of the leaf based on rank
+leafNumberFactor_a1 leafNumberFactor_b1 leafNumberFactor_a2 leafNumberFactor_b2
+-10.61                   0.25                   -5.99           0.27
+**************Leaf Morphology Factors *************
+LAF        WLRATIO         A_LW
+ 1.37          0.106           0.75
+*******************Temperature factors for growth *****************************
+T_base                 T_opt            t_ceil  t_opt_GDD
+8.0                   32.1              43.7       34.0
+

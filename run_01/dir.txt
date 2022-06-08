@@ -1,0 +1,46 @@
+ Volume in drive D is WIn7D
+ Volume Serial Number is 5A2D-F354
+
+ Directory of d:\MAIZSIM07\AgMipET2\run_01
+
+08/03/2020  12:01 AM    <DIR>          .
+08/03/2020  12:01 AM    <DIR>          ..
+08/02/2020  10:23 PM             1,989 AgMip.nit
+07/22/2020  02:14 PM           356,672 Agmip2 - Copy.wea
+07/22/2020  02:14 PM           356,672 Agmip2.wea
+05/05/2020  04:14 PM           356,672 Agmip2.wea.$$$
+08/02/2020  10:23 PM               598 Agmip2Climate.dat
+07/16/2020  11:02 AM               552 Agmip2Climate.dat.$$$
+08/02/2020  10:23 PM               362 BiologyDefault.bio
+08/02/2020  05:00 PM               399 CarlowIRE.tim
+08/03/2020  12:01 AM                 0 createError.log
+08/03/2020  12:01 AM                 0 dir.txt
+08/02/2020  10:23 PM               198 grid1.bat
+08/02/2020  10:23 PM                20 grid2.bat
+08/02/2020  10:49 PM            29,942 MassBl.out
+07/17/2020  02:50 PM           172,642 MassBlRO.out
+08/02/2020  10:49 PM            22,932 MassBlRunOff.out
+08/03/2020  12:01 AM               603 MeadIr_run_01.dat
+07/31/2020  11:31 PM             1,375 MeadIr_run_01.soi
+08/02/2020  10:23 PM               798 NitrogenDefault.sol
+08/02/2020  10:23 PM             1,901 Pn_33B51.var
+07/31/2020  11:31 PM               207 Rosetta.log
+08/02/2020  10:23 PM             1,011 runrun_01.dat
+07/29/2020  12:38 PM             1,011 runrun_01.dat.$$$
+08/02/2020  10:49 PM           374,621 run_01.dbg
+08/02/2020  10:23 PM               161 run_01.drp
+08/02/2020  10:49 PM         2,059,788 run_01.g01
+08/02/2020  10:49 PM        11,250,708 run_01.g02
+08/02/2020  10:49 PM        21,424,645 run_01.G03
+08/02/2020  10:49 PM        17,882,882 run_01.G04
+08/02/2020  10:49 PM            78,187 run_01.G05
+08/02/2020  10:49 PM            64,047 run_01.G06
+08/03/2020  12:01 AM            30,385 run_01.grd
+08/02/2020  10:23 PM               545 run_01.ini
+08/02/2020  10:23 PM             3,169 run_01.lyr
+08/02/2020  10:23 PM               575 run_01.man
+08/03/2020  12:01 AM            51,546 run_01.nod
+04/20/2020  04:42 PM           202,156 run_01.sum
+08/02/2020  10:23 PM               384 run_01.tim
+              37 File(s)     54,730,355 bytes
+               2 Dir(s)  136,192,729,088 bytes free

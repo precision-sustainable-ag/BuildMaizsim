@@ -1,0 +1,20 @@
+*** Script for management practices fertilizer, residue and tillage
+[N Fertilizer]
+****Script for chemical application module  *******mg/cm2= kg/ha* 0.01*rwsp*eomult*100
+Number of Fertilizer applications (max=25) mappl is in total mg N applied to grid (1 kg/ha = 1 mg/m2/width of application) application divided by width of grid in cm is kg ha-1
+ 3 
+mAppl is manure, lAppl is litter. Apply as mg/cm2 of slab same units as N
+tAppl(i)  AmtAppl(i) depth(i) lAppl_C(i) lAppl_N(i)  mAppl_C(i) mAppl_N(i)  (repeat these 3 lines for the number of fertilizer applications)
+'04/21/2003'   42            5             0             0             0             0 
+'06/19/2003'   10.875        5             0             0             0             0 
+'07/08/2003'   10.5          5             0             0             0             0 
+[Residue]
+****Script for residue/mulch application module
+**** Residue amount can be thickness ('t') or mass ('m')   ***
+application  1 or 0, 1(yes) 0(no)
+0
+[Tillage]
+1: Tillage , 0: No till
+ 1 
+till_Date   till_Depth
+'5/10/2003'    15 

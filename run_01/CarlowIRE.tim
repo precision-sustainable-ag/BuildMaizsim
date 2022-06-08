@@ -1,0 +1,8 @@
+*** SYNCHRONIZER INFORMATION *****************************
+Initial time       dt       dtMin     DMul1    DMul2    tFin
+'04/27/1998'  0.0001        0.0000        1.3000        0.3000        '10/08/1998'
+Output variables, 1 if true  Daily    Hourly
+0               1             
+Daily Hourly Weather data frequency. if daily enter 1   0; if hourly enter 0  1
+1               0             
+
