@@ -9,6 +9,7 @@ RUN apt-get -y install gfortran
 RUN apt-get -y install g++-multilib
 #RUN apt-get -y install emacs
 RUN make
-RUN ./maizsim ./run_01/runrun_01.dat
-#CMD make
+RUN rm -f *.o
+CMD ./maizsim ./run_01/runrun_01.dat
+
 #CMD ["./myapp"]
