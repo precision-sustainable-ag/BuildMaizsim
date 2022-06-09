@@ -2,7 +2,7 @@
 ##Docker image to build a Maizsim executable for linux.
 Building the image installs compilers and  compiles the model:
 
-**docker build MaizsimBuild:1.0 . **
+**docker build MaizsimBuild:1.0 .**
 
 running the image will launch the model and run a simulation:
 
