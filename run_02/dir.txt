@@ -1,0 +1,31 @@
+ Volume in drive Y is NewServerC
+ Volume Serial Number is 7CC6-14F6
+
+ Directory of Y:\ExcelInterface\Example input\AgmipET2\run_02
+
+07/20/2022  11:39 AM    <DIR>          .
+07/20/2022  11:39 AM    <DIR>          ..
+07/20/2022  11:38 AM             1,989 AgMip.nit
+07/20/2022  11:38 AM               592 Agmip2Climate.dat
+07/20/2022  11:38 AM               362 BiologyDefault.bio
+07/20/2022  11:39 AM                 0 createError.log
+07/20/2022  11:39 AM                 0 dir.txt
+07/20/2022  11:38 AM               341 GasID.gas
+07/20/2022  11:38 AM               230 grid1.bat
+07/20/2022  11:38 AM                20 grid2.bat
+07/20/2022  11:39 AM               603 MeadIr_run_02.dat
+07/20/2022  11:39 AM                 0 MeadIr_run_02.soi
+07/20/2022  11:38 AM             1,498 MulchGeo1.mul
+07/20/2022  11:38 AM               798 NitrogenDefault.sol
+07/20/2022  11:38 AM             2,585 Pn_33G66.var
+07/20/2022  11:39 AM                 0 Rosetta.log
+07/20/2022  11:38 AM             1,668 runrun_02.dat
+07/20/2022  11:38 AM               161 run_02.drp
+07/20/2022  11:39 AM            30,385 run_02.grd
+07/20/2022  11:38 AM               545 run_02.ini
+07/20/2022  11:38 AM             3,712 run_02.lyr
+07/20/2022  11:38 AM             1,087 run_02.man
+07/20/2022  11:39 AM            62,543 run_02.nod
+07/20/2022  11:38 AM               466 run_02.tim
+              22 File(s)        109,585 bytes
+               2 Dir(s)  236,184,297,472 bytes free

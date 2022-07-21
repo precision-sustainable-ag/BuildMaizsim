@@ -345,8 +345,9 @@ c model cannot handle freezing temperatures yet
           CO2=Climat(3+2*MSW1+MSW2+ISOL*MSW4+MSW6+MSW7)
           GAIR(1)=CO2     
        EndIf
-
-
+           GAIR(2)=209000    !this is the atmospheric O2 concentration in ppm  
+csb O2 content of air=20.95% by volume, ie; 100 parts of air=20.95 parts of O2
+csb 1 part of air=0.2095 parts of O2. in 10^6 parts of air=0.2095*10^6=209000 ppm
 C
 C      ADJUST UNITS FOR HOURLY DATA
 c      HSR(M) is converted to an hours worth of Watts m-2 (Joules m-2 h-1) 
@@ -1112,32 +1113,25 @@ cccz the boundary condition will be automatically shift to 4 when runoff occurs 
 95    Continue
 C ...............End of heat balance
 c................... Gas movement
-      PG=11920.0                                        !For test, we need to add this as an input, also check for the range of this value
       Do i=1,NumBP
           n=KXB(i)
           k=CodeG(n)
           If(K.eq.4.or.K.eq.-4) then                      !-4: soil atmospheric boundary with gas flux instead of Gas content at the nodes
               do jjj=1,NumG
-                  VarBG(i,jjj,2)=PG                       ! PG is the conductance of surface air layer to gas flow or rate constant of the gas exchange between the soil and the atmosphere [cm/day]
-                  VarBG(i,jjj,3)=PG*GAIR(jjj)/509.6       ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!GAIR: is the atmospheric CO2 concentration [ppm], conversion details in grid_bnd
-                  VarBG(i,jjj,1)=GAIR(jjj)/509.6          ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!This is if BC=4, is gas content instead of flux
+                  VarBG(i,jjj,2)=GasTransfCoeff(jjj)      ! GasTransfCoeff is the conductance of surface air layer to gas flow or rate constant of the gas exchange between the soil and the atmosphere [cm/day]
+                  VarBG(i,jjj,3)=GasTransfCoeff(jjj)   
+     !                *GAIR(jjj)/ppm_to_ugGasCm3air(jjj)  ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!GAIR: is the atmospheric CO2 concentration [ppm], see conversion details in grid_bnd
+                  VarBG(i,jjj,1)=GAIR(jjj)/ppm_to_ugGasCm3air(jjj)           ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!This is if BC=4, is gas content instead of flux
               Enddo
           Endif
           if (K.eq.1.or.K.eq.3.or.k.eq.6) then
               do jjj=1,NumG
-                  VarBG(i,jjj,2)=PG
-                  VarBG(i,jjj,1)= GAIR(jjj)/509.6         ! convert the atm CO2 in [ppm]  to [ug co2 /cm3 air]
+                  VarBG(i,jjj,2)=GasTransfCoeff(jjj)   
+                  VarBG(i,jjj,1)= GAIR(jjj)/ppm_to_ugGasCm3air(jjj)          ! convert the atm CO2 in [ppm]  to [ug co2 /cm3 air]
               end do
           end if
       Enddo
-!Unit conversion of [ppm] to [micro gram co2/ cm3 of air]
-!1 ppm [parts per million on a volume basis]= 1 umol CO2/mol of air
-!At STP gas occupies:  1mol/22.4 Liter = 1 mol/22400 cm3
-!1 ppm = 1 umol CO2/22400 cm3 = 4.46*10-5 umol CO2/cm3 air
-!1umol CO2= 44.009 ug co2
-!1ppm=4.46*10-5*44.009  ug CO2/cm3 air
-!1ppm= 1.962*10-3 ug CO2/cm3 air
-!1ppm=(1/509.6) ug CO2/cm3 air      
+     
 c................... End gas movement   
 c................... Furrow irrigation
 c

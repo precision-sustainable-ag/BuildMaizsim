@@ -1,0 +1,12 @@
+*** Gas Movement Parameters Information ***
+ Number of gases
+ 2
+ Computational parameters 
+ EPSI
+ 1 
+ Reduced tortousity rate change with water content (bTort)
+ for entire soil domain 
+ 0.65 
+Gas diffusion coefficients in air at standard conditions, cm2/day
+Gas # 1 (CO2) Gas # 2 (Oxygen) Gas # 3 (Methane)
+ 11920         15400 

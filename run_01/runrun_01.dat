@@ -4,7 +4,7 @@
 ./run_01/Agmip2Climate.dat
 ./run_01/AgMip.nit
 ./run_01/NitrogenDefault.sol
-./run_01/GasCO2Default.gas
+./run_01/GasID.gas
 ./run_01/MeadIr_run_01.soi
 ./run_01/MulchGeo1.mul
 ./run_01/run_01.man
@@ -25,3 +25,4 @@
 ./run_01/MassBl.out
 ./run_01/MassBlRunOff.out
 ./run_01/MassBlMulch.out
+

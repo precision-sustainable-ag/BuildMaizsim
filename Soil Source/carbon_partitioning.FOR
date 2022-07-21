@@ -294,6 +294,7 @@ cccz Zhuangji: AD
 c        RGCF5=(1.0-AMIN1(1.0,RMassY(n)/0.03))
          RGCF5=(1.0-AMIN1(1.0,(RMassY(n)+RMassM(n))/0.02))
          RGCF5=1.0D0
+         RGCF3=1.0D0
 C this one for nitrogen. Use the ratio between actual uptake of N and IMax
     
          dif=amax1(0.0,Conc(n,1)-CMin0(1))

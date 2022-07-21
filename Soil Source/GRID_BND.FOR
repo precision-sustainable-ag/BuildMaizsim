@@ -17,6 +17,30 @@ cccz some parameter (constant) in the Pubsurface.ins
       NO3mass_2_Nmass=14.0067D0/62.0049D0
       NH4mass_2_Nmass=14.0067D0/18.039D0
       
+csb: following are for converting the ppm to ugco2/cm3 air. This value needs to be added for all the gases      
+      ppm_to_ugGasCm3air(1)=509.6                            !See below text: convert the atm CO2 in [ppm]  to [ug co2/cm3 air] 
+      ppm_to_ugGasCm3air(2)=700.6                            !See below text: convert the atm O2 in [ppm]  to [ug O2/cm3 air]      
+
+!Unit conversion of [ppm] to [micro gram co2/ cm3 of air]
+!1 ppm [parts per million on a volume basis]= 1 umol CO2/mol of air
+!At STP gas occupies:  1mol/22.4 Liter = 1 mol/22400 cm3
+!1 ppm = 1 umol CO2/22400 cm3 = 4.46*10-5 umol CO2/cm3 air
+!1umol CO2= 44.009 ug co2
+!1ppm=4.46*10-5*44.009  ug CO2/cm3 air
+!1ppm= 1.962*10-3 ug CO2/cm3 air
+!1ppm=(1/509.6) ug CO2/cm3 air    
+      
+!For oxygen 
+!1umol O2= 32 ug co2
+!1ppm=4.46*10-5*32  ug CO2/cm3 air
+!1ppm=(1/700.6) ug CO2/cm3 air 
+
+csb: Gas transfer coefficient: surface gas flux change per unit gas content in the soil air at the soil surface (cm/day)
+Csb: This value will be different for different gases
+      GasTransfCoeff(1)=11920.
+      GasTransfCoeff(2)=15400.      
+      
+      
       
       im=20
       il=0
@@ -221,7 +245,7 @@ C
       Enddo
 
         NumSol=1
-        NumG=1                                    ! For now, only 1 gas is read, this should be added as a input variable before reading the intial gas concentrations
+        NumG=2                                    ! For now, only 2 gas is read (co2 and o2), this should be added as a input variable before reading the intial gas concentrations
         im=450
         il=0
       Open(41,File=NodeGeomFile,ERR=10)
@@ -279,24 +303,11 @@ cccz ---------------------------------------------------------------------------
       
       Do j=1,NumNP
           Do jjj=1,NumG
-              if (jjj.eq.1) then
-                  g(j,jjj)= g(j,jjj)/509.6      !jjj=1, CO2 gas; convert the initial concentration of CO2 in [ppm]  to [ug co2/cm3 air]
-              else
-                  g(j,jjj)= g(j,jjj)            !Conversion factor for other gases should be added here.  
-              end if
+                  g(j,jjj)= g(j,jjj)/ppm_to_ugGasCm3air(jjj)   !jjj=1, CO2 gas; jjj=2, O2 gas convert the initial concentration of CO2 or O2 in [ppm]  to [ug co2 or O2 /cm3 air]               
           end do
       end do
 
-!Unit conversion of [ppm] to [micro gram co2/ cm3 of air]
-!1 ppm [parts per million on a volume basis]= 1 umol CO2/mol of air
-!At STP gas occupies:  1mol/22.4 Liter = 1 mol/22400 cm3
-!1 ppm = 1 umol CO2/22400 cm3 = 4.46*10-5 umol CO2/cm3 air
-!1umol CO2= 44.009 ug co2
-!1ppm=4.46*10-5*44.009  ug CO2/cm3 air
-!1ppm= 1.962*10-3 ug CO2/cm3 air
-!1ppm=(1/509.6) ug CO2/cm3 air      
- 
-      
+  
       
       
 ! READING FROM Nodal_N.dat alternative file.  BY GR EDN      

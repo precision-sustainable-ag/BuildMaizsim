@@ -109,13 +109,21 @@ c  the unit of gsink should be [microgram co2/cm3/day]
 C  No need of the element level calculation, we can get that direcly
 c  from the  co2 node and node area or directly with unit of gSink as [ug co2/cm3 air/day] 
 
+cSB The sink should be determined for both CO2 and o2 gas
+cSB Sink for O2 is developed by considering a stoichiometric relationship with co2 as the O2 is the source of the oxygen in co2
         Do i=1,NumNP
-          gSink(i,jjj)   = gSink_root(i,1) + gSink_OM(i,1)
-          !Sc(i)= nodeArea(i)
-          Gc(i)= gSink(i,jjj)                                   ![ug co2/cm3 air/day]  
-          !Gc(i)=0.0
-         Enddo
-         
+          if (jjj.eq.1) gSink(i,jjj)  = gSink_root(i,1) + gSink_OM(i,1)
+cSB 1 ug co2=32/44 ug o2
+cSB gSink for CO2 currently=x [ugCO2/cm3air/day]
+cSB So gSink for O2= - 32/44 x [ugO2/cm3air/day]          
+          if (jjj.eq.2) gSink(i,jjj)  = -(32./44.)*
+     !         (gSink_root(i,1) + gSink_OM(i,1))
+
+           Gc(i)= gSink(i,jjj)                                   ![ug co2/cm3 air/day]  
+        Enddo
+          
+        
+        
 c
 c  Assembling matrixes
 c

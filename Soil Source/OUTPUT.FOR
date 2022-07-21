@@ -25,7 +25,7 @@ cccz output for runoff module
       double precision SurInput_Flux,Surface_Flux,Bottom_Flux,
      &     Runoff_Flux,Runoff_Terminal_Flux,Flux_drain,
      &     Runoff_Left_Sum,Runoff_Right_Sum,WaterStorage,
-     &     WaterStorage_pre,Surface_Gas_Flux
+     &     WaterStorage_pre ,Surface_Gas_Flux,FluxGas
       
       double precision
      &      ActualInfil,     ! cccz: original infiltration, Q(n) based, so it is a cumulative value.
@@ -47,7 +47,7 @@ cccz output for runoff module
      &     SeasonActualSoilEvap,SeasonActualInfil,CumulativeFlux,
      &     Runoff,Runoff_02,Runoff_03,
      &     ActualInfil,ActualInfil_02,ActualInfil_03,
-     &     FluxGas,Surface_Gas_Flux
+     &     FluxGas(NumGD),Surface_Gas_Flux(NumGD)
       Common /SurfaceWaterBalance/ 
      &     SurInput_Flux,Surface_Flux,Bottom_Flux,
      &     Runoff_Flux,Runoff_Terminal_Flux,
@@ -118,7 +118,7 @@ C    For gas flux calculation
        open(99,file=MassBalanceRunoffFileOut,status='unknown',recl=250)
          
       Write(81,5) "Date_time,", "Date,", "X,", "Y,", "hNew,","thNew,",
-     &  "VZ,", "VX,","Q,", "ConcN,", "Temp,","GasConc"  
+     &  "VZ,", "VX,","Q,", "ConcN,", "Temp,","GasConc1,","GasConc2"  
      
       Write(82,6) "Date_time,", "Date,", "X,", "Y,", "Node,", 
      &      "RMassM,","RMassY,", "RDenM,", "RDenY,",
@@ -133,7 +133,7 @@ C    For gas flux calculation
        Write(84,20) "Date_time,", "Date,","Flux,","SoilEA,",
      &   "RNS,","RNC,","WATPOT,","WATACT,","WATRAT,", "UpwardLW,",
      &   "DifWat,","Cloud,","Shadow,","DIfInt,","Rowinc,", "PARInt,",
-     &   "RADInt,","CumuFlux,","GasFlux,"
+     &   "RADInt,","CumuFlux,","GasFlux1,","GasFlux2"
        
 cccz initialize for surface runoff
        write(99,'(8A20)') 'time','Date','Rainfall','Inifiltration',
@@ -223,11 +223,12 @@ c           RO(n)=0.0   ! we will use this to store ponded water for next time p
             FluxAct=FluxAct+max(0.0,QAct(n))*step         !QAct=cm3 at a node /time  , FluxAct =total cm3 of water in all the boundary nodes
 c            FluxAct=FluxAct+QAct(n)*step
       endif
-c Calculate the surface flux from gas mover      
+c Calculate the surface flux from gas mover   
+      Do jjj=1,NumG
           if (CodeG(n).eq.-4. or. CodeG(n).eq.1) then
-             FluxGas=FluxGas+QGas(n,1)*step                   !ugCo2 summed over all boundary nodes   QGas[ugco2/day]*[day], FLuxGas[ugco2 over the surface], this has both positive (soil to atm) and negative fluxes (in to the soil)
+             FluxGas(jjj)=FluxGas(jjj)+QGas(n,jjj)*step                   !ugCo2 summed over all boundary nodes   QGas[ugco2/day]*[day], FLuxGas[ugco2 over the surface], this has both positive (soil to atm) and negative fluxes (in to the soil)
           end if
-     
+      end do
 	  enddo
 
 C*** FROM HourlyOut.for END
@@ -259,7 +260,8 @@ cccz calculation of terminal flux for mass balance in runoff module
         call caldat(iday,mm,id,iyyy) 
         write (date,'(i2.2,A1,i2.2,A1,i4.4)') mm,'/',id,'/',iyyy  
           Call ArrNodOut (Date,x,y,NumNP,NumEl,t,NumElD,hNew,
-     !                   ThNew,vz,vx,Q,Conc(1,1),Tmpr,g(1,1))
+     !                   ThNew,vz,vx,Q,Conc(1,1),Tmpr,g(1,1), 
+     !      g(1,2),ppm_to_ugGasCm3air(1),NumG)
         iitime=int(time)
         diff=abs(time-int(time))
         If((NShoot.ne.0).and.(abs((time-int(time))).gt.(0.99))) 
@@ -357,7 +359,7 @@ C EOR is calculated from ET demand in the crop model
 c  pot_ET is the value of potential_T from the previous hour
            
 C EO is the potential transpiration rate from Penman adjusted for plant cover, calculated in the weather subroutine
-c  potential_T_EO is the summation of EO which is soil surface evap from EO and the Penman equation.
+c  potential_T_EO is the summation of EO which is soil surface evap from EO and the Penman equation.vi
 c EOR_p is a rough estimate of potential ET. p_ET is a better estimate using time step to 
 c  integrate rather than use an average
            EOR_p=EOR*period/EOMult/poprow*100.0D0 ! EOR comes from ET_demand from plant
@@ -395,7 +397,8 @@ cccz     &              bottomFlux, Runoff,cover, PSIM, SeasonPotenSoilEvap,
         Write(84,13) t,date,bottomflux,ActualSoilEvap, Wattsm(itime),
      &     RNS,RNC,WATPOT,WATACT, WATRAT,RNLU,
      &     Difwat(itime),Cloud,Shadow(itime),Difint(itime),
-     &      RowInc(itime),Parint(itime), Radint(itime),Surface_Gas_Flux               ! Unit ugCo2 per plant area              
+     &      RowInc(itime),Parint(itime), Radint(itime),
+     &     (Surface_Gas_Flux(jjj),jjj=1,NumG)              ! Unit ugCo2 per plant area              
         
         write(99,'(1F12.4,A12,F14.4,F14.4,F14.4,F14.4,F14.4,F14.4)')    
      &    time, date, SurInput_Flux, Surface_Flux, Runoff_Terminal_Flux,
@@ -461,12 +464,12 @@ C*** FROM HourlyOut.for END
 C10    Call errmes(im,il)
 C format 5 is water, 6 is roots
   5   Format (1x,A12, T20,A7,T37,A2,T47,A2, T56,A5,T68,A6,T82,A3,T90,
-     &     A3,T102,A2, T114, A6, T126, A5, T138, A6)   ! format for nodal data header
+     &     A3,T102,A2, T114, A6, T126, A5, T138, A9,T152, A8)   ! format for nodal data header
   6   Format (1x,A16,T20,A5,T36,A2,T46,A2,T56,A5,T65,A7,T78,A7, T90,A6,
      &        T102, A6, T112, A11, T124, A8, T136, A8, T146, A5 )
  10   Format (1x,F17.6,',', A15,',',17(F16.3, ','), F16.3)  !format for flux data
- 13   Format (1x,F17.6,',',A15,',',16(F16.3, ','), F16.3)  ! format for second flux data [G06]
- 20   Format (1x,20A16)              !format for flux header
+ 13   Format (1x,F17.6,',',A15,',',17(F16.3, ','), F16.3)  ! format for second flux data [G06]
+ 20   Format (1x,21A16)              !format for flux header
 2103  Format (1x,A12,T20,A12,T49,A1,T64,A1,T76,A10,T95,A10,T109,A10)
 2104  Format (1x,F17.6,',',A15,',',4(F16.4,','),F16.4)     
       
@@ -495,18 +498,22 @@ C      Endif
       End      
 C/***************************************************/
       subroutine ArrNodOut(Date,x,y,NumNP,NumEl,t,NumElD,Head,      
-     !          ThetaArr, vzArr,vxArr,QArr,ConcArr,TemprArr,gArr)
+     !          ThetaArr, vzArr,vxArr,QArr,ConcArr,TemprArr,
+     !           gArr1 ,gArr2,ppm_to_ugGasCm3air,NumG)
       Character*10 Date
       Dimension Head(NumNP),x(NumNP),y(NumNP),
      !         ThetaArr(NumNP), vzArr(NumNP),vxArr(NumNP),QArr(NumNP),
-     !         ConcArr(NumNP),TemprArr(NumNP),gArr(NumNP)
+     !         ConcArr(NumNP),TemprArr(NumNP),gArr1(NumNP,NumG) ,
+     !         gArr2(NumNP,NumG), ppm_to_ugGasCm3air(NumG)
 
         Do n=1,NumNP
           Write(81,140)t, date, x(n),y(n),Head(n),ThetaArr(n),
      !     vzArr(n),vxArr(n),QArr(n),ConcArr(n),TemprArr(n),
-     !      gArr(n)*509.6 !convert the initial concentration of CO2 in [ug/cm3 air] to ppm, for other gas, this should be revised
+     !      gArr1(n,1)*ppm_to_ugGasCm3air(1) ,
+     !     gArr2(n,1)*ppm_to_ugGasCm3air(2)  
+          !convert the initial concentration of CO2 and O2 in [ug/cm3 air] to ppm
         Enddo
- 140   format(1x, f14.6,',', a12,',', 2(f11.2,','),7(G11.3,','),G11.3)
+ 140   format(1x, f14.6,',', a12,',', 2(f11.2,','),8(G11.3,','),G11.3)
       Return
       End
   
