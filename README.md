@@ -1,5 +1,5 @@
 # BuildMaizsim
-## Docker image to build a Maizsim executable for linux.
+## Docker image to compile a Maizsim executable for linux.
 Building the image installs compilers and  compiles the model:
 
 **docker build --tag maizsimbuild:1.0 . **
