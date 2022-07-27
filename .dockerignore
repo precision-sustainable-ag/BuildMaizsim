@@ -1,3 +1,7 @@
 .git
-/run_01
-/run_02
+.gitignore
+2dMAIZSIM.exe
+Maizsim.dll
+README.md
+*.G0*
+
