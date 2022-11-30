@@ -176,12 +176,19 @@ c  RESET: assembling of the matrixes
 c
       xMul=1.
 
-      B(:)=0.
-      F(:)=0.
+      !B(:)=0.
+      !F(:)=0.
+      Do 212 i=1,NumNP
+ 
+        B(i)=0.
+        F(i)=0.
 C added 1 line
-      if(lOrt) B1(:)=hNew(:) 
-      If (Iter.eq.0) DS(:)=0.
-      A(:,:)=0.
+        if(lOrt) B1(i)=hNew(i) 
+        If (Iter.eq.0) DS(i)=0.
+        Do 211 j=1,MBandD
+           A(j,i)=0.
+211     Continue
+212   Continue
 C
 C     Loop on elements
 C

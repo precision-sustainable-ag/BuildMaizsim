@@ -363,7 +363,26 @@ c    ---------------------------------------------------------------------------
 cccz -----------------------------Initialization---------------------------------------------
 c    ----------------------------------------------------------------------------------------
 c    ----------------------------------------------------------------------------------------
-cccz
+
+cccz reset the varbt/varbw value before each
+cccz reset everything based on the upper layer, i.e., air
+      do i=1,NumBP
+       Varbt(i,1)=Varbt_Air(i,1)
+       Varbt(i,2)=Varbt_Air(i,2)
+       Varbt(i,3)=Varbt_Air(i,3)
+       Varbt(i,4)=Varbt_Air(i,4)
+       Varbt_mulch(i,1)=Varbt_Air(i,1)
+       Varbt_mulch(i,2)=Varbt_Air(i,2)
+       Varbt_mulch(i,3)=Varbt_Air(i,3)
+       Varbt_mulch(i,4)=Varbt_Air(i,4)
+       Varbw(i,1)=Varbw_Air(i,1)
+       Varbw(i,2)=Varbw_Air(i,2)
+       Varbw(i,3)=Varbw_Air(i,3)
+       Varbw_mulch(i,1)=Varbw_Air(i,1)
+       Varbw_mulch(i,2)=Varbw_Air(i,2)
+       Varbw_mulch(i,3)=Varbw_Air(i,3)
+      enddo
+      
        if (residueApplied.le.0) then
          return
        endif
@@ -498,7 +517,7 @@ cccz need to compute the correct input
        
 cccz just run the following subroutines once to initialize them       
         aaaa=WQ_CERES_MULCH(-5000.0D0,rho_mulch_b,0.1D0,lInput)    ! the CERES model is based on bulk mulch instead of solid, so there is no need for a more conversion based on "f_mulch_pore"
-        aaaa=WH_CERES_MULCH(0.01D0,rho_mulch_b,0.1D0,lInput)
+        aaaa=WH_CERES_MULCH(0.01,rho_mulch_b,0.1D0,lInput)
         waterCapaIni=WC_CERES_MULCH(-5000.0D0,rho_mulch_b,0.1D0,lInput)
         thMulchSat=WQ_CERES_MULCH(-0.000001D0,rho_mulch_b,0.1D0,0)
         call MulchDecomposition()

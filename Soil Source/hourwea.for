@@ -612,8 +612,9 @@ C
           Do 30 I = 1,IPERD
             SINALT(I) = D12 + (D13*COS(HRANG(I)))
             SOLALT(I) = ASIN(SINALT(I))
-            SINAZI(I) = -COS(DEC)*SIN(HRANG(I))/COS(SOLALT(I))
- 30       Continue
+            SINAZI(I) = max(-1.D0,(-COS(DEC)*
+     &        SIN(HRANG(I))/COS(SOLALT(I)))) 
+30       Continue
           D18 = 0.0
           Do 60, I = 1,IHPERD
             SOLAZI(I) = PI + ASIN(SINAZI(I))

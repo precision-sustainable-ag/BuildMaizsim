@@ -34,6 +34,13 @@ to run and create in interactive mode, use -it
 
 this would open the container in Bash and you can run commands. the model will already be compiled
 
+If you have started the container and it is running you can interact with it as
+use docker ps to get the name of the running container
+in this example, the name is nice_poitras and I am running the command to list the files
+in the run_01 folder
+docker exec -it nice_poitras ls ./run_01
+
+ro run a terminal use /bin/bash instead of ls ./run_01
 to run the model use:
 
  ./maizsim ./run_02/runrun_02.dat

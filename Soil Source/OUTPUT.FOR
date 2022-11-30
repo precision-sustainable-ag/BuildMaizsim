@@ -13,19 +13,21 @@ C summary output variables
       Include 'puweath.ins'
       Include 'puplant.ins'
       include 'PuSurface.ins'
-      Integer Plevel,e
+      Integer Plevel,e, hourCount
       
       Dimension temp(1000)
       Real PotentialSoilEvaporation, WidthT,Period
       Real SeasonRainfall, SeasonPotenTranspiration,
      &     SeasonActualTranspiration, SeasonPotenSoilEvap,
-     &     SeasonActualSoilEvap,SeasonActualInfil
+     &     SeasonActualSoilEvap,SeasonActualInfil,
+     &     SumArrayTh
       Character*10 date, Stime
 cccz output for runoff module
       double precision SurInput_Flux,Surface_Flux,Bottom_Flux,
      &     Runoff_Flux,Runoff_Terminal_Flux,Flux_drain,
      &     Runoff_Left_Sum,Runoff_Right_Sum,WaterStorage,
-     &     WaterStorage_pre ,Surface_Gas_Flux,FluxGas
+     &     WaterStorage_pre ,Surface_Gas_Flux,FluxGas,
+     $     nitrogenFlux
       
       double precision
      &      ActualInfil,     ! cccz: original infiltration, Q(n) based, so it is a cumulative value.
@@ -47,7 +49,9 @@ cccz output for runoff module
      &     SeasonActualSoilEvap,SeasonActualInfil,CumulativeFlux,
      &     Runoff,Runoff_02,Runoff_03,
      &     ActualInfil,ActualInfil_02,ActualInfil_03,
-     &     FluxGas(NumGD),Surface_Gas_Flux(NumGD)
+     &     FluxGas(NumGD),Surface_Gas_Flux(NumGD),
+     $     SumArrayTh(NumNPD), hourCount,
+     $     nitrogenFlux
       Common /SurfaceWaterBalance/ 
      &     SurInput_Flux,Surface_Flux,Bottom_Flux,
      &     Runoff_Flux,Runoff_Terminal_Flux,
@@ -67,7 +71,9 @@ C
         ModNum=NumMod
         tNext(ModNum) = time
 
-C*** FROM HourlyOut.for BEGIN      
+C*** FROM HourlyOut.for BEGIN   
+        SumArrayTh=ThNew
+        hourCount=0
         timer=0
         Flux_drain=0.0
         fluxAct=0.0
@@ -97,6 +103,8 @@ cccz
 	  ActualTrans1=0.0
 	  pot_ET=0.0
 	  pot_ET_EO=0.0
+        nitrogenFlux=0.0
+        
         
 cccz initialize these only for runoff output file
         SurInput_Flux=0.0
@@ -113,28 +121,30 @@ C    For gas flux calculation
         
 	  Open(81,file=NodeGraphics)
 	  open(82,file=ElemGraphics)  
-	  Open(83,file=SurfaceGraphics, recl=350)
-        Open(84,file=FluxGraphics)
+	  Open(83,file=SurfaceGraphics, recl=390)
+        Open(84,file=FluxGraphics, recl=370)
        open(99,file=MassBalanceRunoffFileOut,status='unknown',recl=250)
-         
+C G03 file  node graphics       
       Write(81,5) "Date_time,", "Date,", "X,", "Y,", "hNew,","thNew,",
-     &  "VZ,", "VX,","Q,", "ConcN,", "Temp,","GasConc1,","GasConc2"  
-     
+     &  "VZ,", "VX,","Q,", "ConcN,", "Temp,","Area,",
+     &   "GasConc1,","GasConc2"  
+C G04 file  Element graphics (really root now)   
       Write(82,6) "Date_time,", "Date,", "X,", "Y,", "Node,", 
      &      "RMassM,","RMassY,", "RDenM,", "RDenY,",
-     &      "WaterSink,", "NitSink,", "GasSink,", "Area"
-         
+     &      "WaterSink,", "NitSink,", "GasSink"
+C G05 file  Surface Graphics       
       Write(83,20) "Date_time,", "Date,", "PSoilEvap,", 
      &      "ASoilEVap,", "PET_PEN,","PE_T_int,","transp,",
-     &      "CumRain,","infil,","FLuxAct,", "Drainage,", "Runoff,",
+     &      "CumRain,","infil,","FLuxAct,", "Drainage,",
+     &      "Nitro_drain,","Runoff,",
      &      "cover,","PSIM,", "SeasPSoEv,","SeasASoEv," ,"SeasPTran,",
      &      "SeasATran,","SeasRain,","SeasInfil" 
-       
+C G06 file  Flux graphics       
        Write(84,20) "Date_time,", "Date,","Flux,","SoilEA,",
      &   "RNS,","RNC,","WATPOT,","WATACT,","WATRAT,", "UpwardLW,",
      &   "DifWat,","Cloud,","Shadow,","DIfInt,","Rowinc,", "PARInt,",
      &   "RADInt,","CumuFlux,","GasFlux1,","GasFlux2"
-       
+C surface runoff file - ToDo rename to G08 (carbon is G07)       
 cccz initialize for surface runoff
        write(99,'(8A20)') 'time','Date','Rainfall','Inifiltration',
      &    'Runoff@end', 'WaterStorage', 
@@ -191,11 +201,13 @@ C  pressure head and flux is calculated CodeW >0 indicates head is set at 0 and 
       	 do i=1,NumBp
 	     n=KXB(i)
 	     
-	     
+C calculate N flux in drainage, only consider flow out of the domain (<0) units are gN (convert from ug)	     
 	     if ((CodeW(n).eq.(-7)).or.(CodeW(n).eq.(2))
      &             .or.(CodeW(n).eq.(1))) then
 	        Flux_drain=Flux_drain+Q(n)*step
-	        
+              nitrogenflux=nitrogenflux+min(0.0,Q(n))
+     &             *conc(n,1)*step*NO3mass_2_Nmass/1.0e6 
+      
            endif
 c case for evaporation
 
@@ -205,7 +217,7 @@ cccz changed varbw to Varbw_Air
           endif
 c case for rainfall
           if (abs(CodeW(n)).eq.4) then
-            ActualInfil=ActualInfil+max(0.0,Q(n))*step
+            ActualInfil=ActualInfil+max(0.0,Qact(n))*step
             ActualInfil_03=ActualInfil_03+max(0.0,Qact(n))*step
 
 cccz calculation of runoff
@@ -253,22 +265,28 @@ cccz calculation of terminal flux for mass balance in runoff module
           Runoff_Right_Sum=Runoff_Right_Sum
      &     +abs(RunoffRight+RunoffRight_Efflux)*step
 
-
-
+          
+          if(DailyOutput.eq.1) then
+             SumArrayTh=SumArrayTh + ThNew
+             hourCount=hourCount+1
+           endif
 11    If(abs(time-tNext(ModNum)).lt.0.001*Step.OR.lInput.eq.1) then
           iday=int(t)
+          if (DailyOutput.eq.1) then
+             SumArrayTh=SumArrayTh/Real(hourCount)
+           endif
         call caldat(iday,mm,id,iyyy) 
         write (date,'(i2.2,A1,i2.2,A1,i4.4)') mm,'/',id,'/',iyyy  
           Call ArrNodOut (Date,x,y,NumNP,NumEl,t,NumElD,hNew,
      !                   ThNew,vz,vx,Q,Conc(1,1),Tmpr,g(1,1), 
-     !      g(1,2),ppm_to_ugGasCm3air(1),NumG)
+     !      g(1,2),ppm_to_ugGasCm3air(1),NumG, NodeArea)
         iitime=int(time)
         diff=abs(time-int(time))
         If((NShoot.ne.0).and.(abs((time-int(time))).gt.(0.99))) 
      !       then
              Call ArrRootOut (Date,x,y,t, NumNP,RMassM,RMassY,
      !            RDenM, RDenY, Sink,
-     !            cSink(1,1),gSink(1,1),NodeArea)
+     !            cSink(1,1),gSink(1,1))
             !Call OutToDB(Sink(1))
         Endif
         tNext(ModNum) = time + Period
@@ -318,6 +336,7 @@ cccz DT: you change the name of bottomflux to Flux_Drain, what about fix it here
 cccz              bottomFlux=bottomFlux/(RowSP/2)*10*24    !cm/cm2/day
 cccz              CumulativeFlux=CumulativeFlux+bottomFlux
               Flux_drain=Flux_drain/EOMult/poprow*100.0D0
+              nitrogenFlux=nitrogenFlux/EOMult/poprow*100.0D0
               CumulativeFlux=CumulativeFlux+Flux_drain
               
 cccz the averaged process for actual infiltraiton
@@ -326,7 +345,7 @@ cccz the averaged process for actual infiltraiton
               ActualInfil_03=ActualInfil_03/EOMult/poprow*100.0D0
               
 cccz the averaged process for runoff
-              Runoff=Runoff/EOMult/poprow*100.0D0
+              !Runoff=Runoff/EOMult/poprow*100.0D0
               Runoff_02=Runoff_02/EOMult/poprow*100.0D0
               Runoff_03=Runoff_03/EOMult/poprow*100.0D0  
 cccz
@@ -388,7 +407,8 @@ C     Gas unit conversion to ugCo2/cm2
      &              p_ET, CurrentTrans,CumRain,ActualInfil,FLuxAct,
 cccz DT: you changed the name "bottomflux" to "Flux_Drain"
 cccz     &              bottomFlux, Runoff,cover, PSIM, SeasonPotenSoilEvap,
-     &              Flux_drain, Runoff,cover, PSIM, SeasonPotenSoilEvap,
+     &              Flux_drain, nitrogenFlux, Runoff_02,cover, PSIM, 
+     &              SeasonPotenSoilEvap,
      &              SeasonActualSoilEvap, SeasonPotenTranspiration,
      &               SeasonActualTranspiration,  SeasonRainfall,  
      &              SeasonActualInfil
@@ -421,7 +441,10 @@ cccz output for node-base values
 cccz ---------------------- finish mulch printing --------------------------
 
           
-
+        if (DailyOutput.eq.1) then
+             SumArrayTh=0.0
+             hourCount=0
+           endif
 	  Flux_drain=0
 	  ActualSoilEvap=0
 	  ActualInfil=0
@@ -431,6 +454,7 @@ cccz ---------------------- finish mulch printing --------------------------
 	  timer=0
 	  FluxAct=0.0
 	  CumRain=0.0
+        nitrogenFLux=0.0
 	  PotentialSoilEvaporation=0.0
 cccz reset runoff values
 	  Runoff=0.0
@@ -464,12 +488,14 @@ C*** FROM HourlyOut.for END
 C10    Call errmes(im,il)
 C format 5 is water, 6 is roots
   5   Format (1x,A12, T20,A7,T37,A2,T47,A2, T56,A5,T68,A6,T82,A3,T90,
-     &     A3,T102,A2, T114, A6, T126, A5, T138, A9,T152, A8)   ! format for nodal data header
+     &     A3,T102,A2, T114, A6, T126, A5, T135, A5, 
+     &     T149, A9, T162, A9)   ! format for nodal data header
   6   Format (1x,A16,T20,A5,T36,A2,T46,A2,T56,A5,T65,A7,T78,A7, T90,A6,
-     &        T102, A6, T112, A11, T124, A8, T136, A8, T146, A5 )
- 10   Format (1x,F17.6,',', A15,',',17(F16.3, ','), F16.3)  !format for flux data
+     &        T102, A6, T112, A11, T124, A8, T136, A8)
+ 10   Format (1x,F17.6,',', A15,',',9(F16.3, ','), F10.6, ',',
+     &        8(F16.3, ','),F16.3)  !format for flux data
  13   Format (1x,F17.6,',',A15,',',17(F16.3, ','), F16.3)  ! format for second flux data [G06]
- 20   Format (1x,21A16)              !format for flux header
+ 20   Format (1x,22A16)              !format for flux header
 2103  Format (1x,A12,T20,A12,T49,A1,T64,A1,T76,A10,T95,A10,T109,A10)
 2104  Format (1x,F17.6,',',A15,',',4(F16.4,','),F16.4)     
       
@@ -478,42 +504,43 @@ C/***************************************************/
 CDT !0/24/2018 modified to output nodal values for roots
       Subroutine ArrRootOut(Date,x,y,t,NumNP,RMassM,RMassY,
      !            RDenM, RDenY,
-     !           SinkArr,cSinkArr,gSinkArr,Area)
+     !           SinkArr,cSinkArr,gSinkArr)
       Character *10 Date
       Dimension RMassM(NumNP), RMassY(NumNP), RDenM(NumNP), 
-     !           RDenY(NumNP),Area(NumNP),x(NumNP),y(NumNP),
+     !           RDenY(NumNP),x(NumNP),y(NumNP),
      !         SinkArr(NumNP),cSinkArr(NumNP),gSinkArr(NumNP)
 
       do n=1,NumNP
         Write(82,140)t, Date, x(n),y(n), n,RMassM(n), RMassY(n),
      !      RDenM(n), RDenY(n),
-     !      SinkArr(n),cSinkArr(n),gSinkArr(n),Area(n)
+     !      SinkArr(n),cSinkArr(n),gSinkArr(n)
         Enddo
 C      Endif     
 130   format('     Time           x             y     Temp   RTWT_',
      !        '          Sink_       cSink       gSink'/)
  140   format(1x,f14.6,',', A12,',', 2(f11.2,','),i8,',',
-     !   7(G11.3,','),G11.3)
+     !   6(G11.3,','),G11.3)
       Return
       End      
 C/***************************************************/
       subroutine ArrNodOut(Date,x,y,NumNP,NumEl,t,NumElD,Head,      
      !          ThetaArr, vzArr,vxArr,QArr,ConcArr,TemprArr,
-     !           gArr1 ,gArr2,ppm_to_ugGasCm3air,NumG)
+     !           gArr1 ,gArr2,ppm_to_ugGasCm3air,NumG, Area)
       Character*10 Date
       Dimension Head(NumNP),x(NumNP),y(NumNP),
      !         ThetaArr(NumNP), vzArr(NumNP),vxArr(NumNP),QArr(NumNP),
      !         ConcArr(NumNP),TemprArr(NumNP),gArr1(NumNP,NumG) ,
-     !         gArr2(NumNP,NumG), ppm_to_ugGasCm3air(NumG)
+     !         gArr2(NumNP,NumG), ppm_to_ugGasCm3air(NumG),
+     !         Area(NumNP)
 
         Do n=1,NumNP
           Write(81,140)t, date, x(n),y(n),Head(n),ThetaArr(n),
      !     vzArr(n),vxArr(n),QArr(n),ConcArr(n),TemprArr(n),
-     !      gArr1(n,1)*ppm_to_ugGasCm3air(1) ,
+     !      Area(n), gArr1(n,1)*ppm_to_ugGasCm3air(1) ,
      !     gArr2(n,1)*ppm_to_ugGasCm3air(2)  
           !convert the initial concentration of CO2 and O2 in [ug/cm3 air] to ppm
         Enddo
- 140   format(1x, f14.6,',', a12,',', 2(f11.2,','),8(G11.3,','),G11.3)
+ 140   format(1x, f14.6,',', a12,',', 2(f11.2,','),9(G11.3,','),G11.3)
       Return
       End
   

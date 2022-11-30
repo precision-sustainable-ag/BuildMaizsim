@@ -12,6 +12,6 @@ RUN apt-get -y install g++-multilib
 RUN apt-get -y install nano
 RUN make
 RUN rm -f *.o
-CMD ./maizsim ./run_01/runrun_01.dat
+#CMD ./maizsim ./run_01/runrun_01.dat
 
 #CMD ["./myapp"]

@@ -239,14 +239,6 @@ cccz record the surface temperature boundary condition
         GasBCRecord(i)=CodeG(n) 
       enddo
       
-      do n=1,SurNodeIndex
-          kk=SurfNodeSurfIndexH(n)
-          nn=SurfNodeNodeIndexH(n)
-          varbw_Runoff_Loc_Record(kk,1)=varbw(kk,1)
-          varbw_Runoff_Loc_Record(kk,2)=varbw(kk,2)
-          varbw_Runoff_Loc_Record(kk,3)=varbw(kk,3)
-          Q_Runoff_Loc_Record(nn)=Q(nn)
-      enddo    
       RunoffRight_Runoff_Loc_Record=RunoffRight
       RunoffLeft_Runoff_Loc_Record=RunoffLeft
       
@@ -265,18 +257,24 @@ cccz if the time step move backwards, return
           do n=1,SurNodeIndex
             kk=SurfNodeSurfIndexH(n)
             nn=SurfNodeNodeIndexH(n)
-            varbw(kk,1)=varbw_Runoff_Loc_Record(kk,1)
-            varbw(kk,2)=varbw_Runoff_Loc_Record(kk,2)
-            varbw(kk,3)=varbw_Runoff_Loc_Record(kk,3)
-            Q(nn)=Q_Runoff_Loc_Record(nn)
+            varbw(kk,1)=varbw_mulch(kk,1)
+            varbw(kk,2)=varbw_mulch(kk,2)
+            varbw(kk,3)=varbw_mulch(kk,3)
+            Q(nn)=-Width(kk)*VarBW_mulch(kk,3)
           enddo    
           RunoffRight=RunoffRight_Runoff_Loc_Record
           RunoffLeft=RunoffLeft_Runoff_Loc_Record
+          time_runoff_old=time
           return
       endif
       
       time_runoff_old=time
       
+      do n=1,SurNodeIndex
+          kk=SurfNodeSurfIndexH(n)
+          nn=SurfNodeNodeIndexH(n)
+          Q(nn)=-Width(kk)*VarBW_mulch(kk,3)
+      enddo          
       
       CriticalH_R=0.1D0 
       if (residueApplied.le.0) then 
@@ -2873,18 +2871,8 @@ cccz reset the boundary temperature condition
            CodeG(n)=GasBCRecord(i)
          enddo 
        endif
-       goto 1300
- 
-cccz do some final record       
-1300  do n=1,SurNodeIndex
-         kk=SurfNodeSurfIndexH(n)
-         nn=SurfNodeNodeIndexH(n)
-         varbw_Runoff_Loc_Record(kk,1)=varbw(kk,1)
-         varbw_Runoff_Loc_Record(kk,2)=varbw(kk,2)
-         varbw_Runoff_Loc_Record(kk,3)=varbw(kk,3)
-         Q_Runoff_Loc_Record(nn)=Q(nn)
-      enddo    
-      RunoffRight_Runoff_Loc_Record=RunoffRight
+
+1300  RunoffRight_Runoff_Loc_Record=RunoffRight
       RunoffLeft_Runoff_Loc_Record=RunoffLeft 
        
       return

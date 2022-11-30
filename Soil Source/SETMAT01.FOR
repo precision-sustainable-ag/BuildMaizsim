@@ -259,7 +259,8 @@ c      double precision PPar
         FC=max(C2,1.d-37)
         return
       else
-        FC=0.0
+        FC=0.0001
+       ! write(*,*) 'h > hs', h, Hs
       endif
       return
       end
