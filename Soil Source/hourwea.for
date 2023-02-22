@@ -142,7 +142,6 @@ c
       im=160
       il=0
       Open (5,file=ClimateFile,status='old',ERR=10)
-
 C
 C  Read descriptors and conversion constants for weather data
 C
@@ -508,7 +507,6 @@ c  radiation between dawn and dusk  can be 0 so need to adjust WATTSM for this
            endif
         endif
        enddo
-
 c..................... Temperature and vapour pressure submodel
 
 

@@ -1,0 +1,43 @@
+ Volume in drive D is WIn7D
+ Volume Serial Number is 5A2D-F354
+
+ Directory of D:\MAIZSIM07\MDEasternShore\Del06
+
+02/03/2023  11:34 AM    <DIR>          .
+02/03/2023  11:34 AM    <DIR>          ..
+02/03/2023  11:34 AM               362 BiologyDefault.bio
+02/03/2023  11:34 AM                 0 createError.log
+02/03/2023  11:34 AM             1,024 Del.nit
+02/03/2023  11:34 AM               161 DEL06.drp
+02/02/2023  10:57 PM           196,147 DEL06.g01
+02/02/2023  10:57 PM           283,284 DEL06.g02
+02/02/2023  10:57 PM        27,319,852 DEL06.G03
+02/02/2023  10:57 PM           599,905 DEL06.G04
+02/02/2023  10:57 PM           154,563 DEL06.G05
+02/02/2023  10:57 PM           148,035 DEL06.G06
+02/02/2023  10:57 PM        22,032,195 DEL06.G07
+02/03/2023  11:34 AM            15,693 DEL06.grd
+02/03/2023  11:34 AM               543 DEL06.ini
+02/03/2023  11:34 AM             2,540 DEL06.lyr
+01/29/2023  11:19 PM             1,297 DEL06.lyr.$$$
+02/03/2023  11:34 AM             1,310 DEL06.man
+02/03/2023  11:34 AM            30,971 DEL06.nod
+01/25/2023  11:26 AM               666 Del06.soi
+02/03/2023  11:34 AM               466 DEL06.tim
+02/03/2023  11:34 AM           480,301 DEL06.wea
+02/03/2023  11:34 AM                 0 dir.txt
+02/03/2023  11:34 AM               341 GasID.gas.gas
+02/03/2023  11:34 AM               195 grid1.bat
+02/03/2023  11:34 AM                20 grid2.bat
+02/02/2023  10:57 PM             8,891 MassBl.out
+02/02/2023  10:56 PM               120 MassBlMulch.out
+02/02/2023  10:57 PM            47,682 MassBlRunOff.out
+02/03/2023  11:34 AM             1,498 MulchGeo1.mul
+02/03/2023  11:34 AM               553 NitrogenDefault.sol
+02/03/2023  11:34 AM             2,584 PI33B53.var
+02/02/2023  10:57 PM               976 plantstress.crp
+02/03/2023  11:34 AM             1,302 runDEL06.dat
+02/03/2023  11:34 AM               625 WyeClimate.dat
+02/03/2023  11:34 AM               666 WyeSoil.soi
+              34 File(s)     51,334,768 bytes
+               2 Dir(s)  112,912,146,432 bytes free

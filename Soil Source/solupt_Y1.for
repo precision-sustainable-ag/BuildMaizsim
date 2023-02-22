@@ -95,7 +95,10 @@ c     $     young     old    young     old      sum       sumSink'
 103		format(a) 
       Endif
       
-      If (NShoot.eq.0) return
+      If (NShoot.eq.0) then
+          csink(:,1) =0.0
+          return
+       endif
       
       if(ITIME.EQ.1) iflag =  1
       SIncrSink = 0.0
@@ -209,6 +212,7 @@ c calculate and alternative alphaK depending on demand
 	    RootRatio2=RootRatio*RootRatio
 	     if (Disp(n,j).le.0.0) then
              GammaB=0
+             PC=1.0 ! PC is not used but this is just to be safe
 	      else
 	      If ((VUP(n,j).le.1.0e-6).OR.(iSink.EQ.3)) Then
 	       GammaB=alphaK(n,j)*RootRadius/(Disp(n,j))
@@ -226,18 +230,11 @@ c calculate and alternative alphaK depending on demand
 	         Else
                 PC=amax1(0.00001,amin1(1.0,VUP(n,j)/PC))	       
                EndIf
-             if (isNAN(PC)) then
+               if (isNAN(PC)) then
                 iii=1
-              endif
+               endif
 	       EndIF  !VUP <=0
 	     EndIf   !Disp <= 0
-           if (isNAN(PC)) then
-            iii=1
-            endif
-	    if ((PC.lt.0).or.(PC.gt.1.0))then 
-	    
-	      iii=1
-	      EndIf
 	    qSinkC(n,j)=TwoPi*RootRadius
 	    qSinkC(n,j)=qSinkC(n,j)*alphaK(n,j)*PC*Csink_M(n)	
 	    Cr_M(n,j)=PC*CSink_M(n)         ! update value at root, may have to iterate      

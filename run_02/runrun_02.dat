@@ -12,7 +12,7 @@
 ./run_02/Water.DAT
 ./run_02/WaterBound.DAT
 ./run_02/run_02.ini
-./run_02/Pn_33B51.var
+./run_02/Pn_33G66.var
 ./run_02/run_02.grd
 ./run_02/run_02.nod
 ./run_02/MassBl.dat
@@ -22,6 +22,7 @@
 ./run_02/run_02.G04
 ./run_02/run_02.G05
 ./run_02/run_02.G06
+./run_02/run_02.G07
 ./run_02/MassBl.out
 ./run_02/MassBlRunOff.out
 ./run_02/MassBlMulch.out

@@ -150,6 +150,7 @@ c          FracClay(M) =Par(13,M)
         If(Explic) hi2=hi1
         If(hi2.ge.hSat(M)) then
           Ci=0
+          Ci=FC(hSat(M),PAR) !prevent capacitance from going to 0
           Ti=thSat(M)
         Else if(hi2.ge.(hTab(NTabD)+.04).and.hi2.le.hTab(1)) then
           iT=int((alog10(-hi2)-alh1)/dlh)+1
@@ -164,12 +165,8 @@ c          FracClay(M) =Par(13,M)
         Cap(i)=Ci
         theta(i)=thR(M)+(Ti-thR(M))
 
-Csun need to get the air porosity through ThNew(NumNPD) 
-csun 2.65 is used as a rule of thumb based on the average bulk density of rock with no pore space.
-Csun air porsity : 1-BlkDn(i)/2.65 - ThNew(i)
-	  soilair(i) = 1-BlkDn(MatNum(i))/2.65-theta(i)
-Csun no negative air value
-	  soilair(i) = AMAX1(soilair(i),0.)
+csb soil air  equals total porosity (or saturated water content)- current water content
+        soilair(i)= AMAX1(thSat(M)-theta(i),0.0001)
 	
 C calculate available water content
         If (theta(i).lt.TLowerLimit(M)) Then 

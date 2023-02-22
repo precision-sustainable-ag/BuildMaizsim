@@ -366,23 +366,33 @@ c    ---------------------------------------------------------------------------
 
 cccz reset the varbt/varbw value before each
 cccz reset everything based on the upper layer, i.e., air
-      do i=1,NumBP
-       Varbt(i,1)=Varbt_Air(i,1)
-       Varbt(i,2)=Varbt_Air(i,2)
-       Varbt(i,3)=Varbt_Air(i,3)
-       Varbt(i,4)=Varbt_Air(i,4)
-       Varbt_mulch(i,1)=Varbt_Air(i,1)
-       Varbt_mulch(i,2)=Varbt_Air(i,2)
-       Varbt_mulch(i,3)=Varbt_Air(i,3)
-       Varbt_mulch(i,4)=Varbt_Air(i,4)
-       Varbw(i,1)=Varbw_Air(i,1)
-       Varbw(i,2)=Varbw_Air(i,2)
-       Varbw(i,3)=Varbw_Air(i,3)
-       Varbw_mulch(i,1)=Varbw_Air(i,1)
-       Varbw_mulch(i,2)=Varbw_Air(i,2)
-       Varbw_mulch(i,3)=Varbw_Air(i,3)
-      enddo
-      
+	  do i=1,NumBP
+	   Varbt(i,1)=Varbt_Air(i,1)
+	   Varbt(i,2)=Varbt_Air(i,2)
+	   Varbt(i,3)=Varbt_Air(i,3)
+	   Varbt(i,4)=Varbt_Air(i,4)
+	   Varbt_mulch(i,1)=Varbt_Air(i,1)
+	   Varbt_mulch(i,2)=Varbt_Air(i,2)
+	   Varbt_mulch(i,3)=Varbt_Air(i,3)
+	   Varbt_mulch(i,4)=Varbt_Air(i,4)
+	   Varbw(i,1)=Varbw_Air(i,1)
+	   Varbw(i,2)=Varbw_Air(i,2)
+	   Varbw(i,3)=Varbw_Air(i,3)
+	   Varbw_mulch(i,1)=Varbw_Air(i,1)
+	   Varbw_mulch(i,2)=Varbw_Air(i,2)
+	   Varbw_mulch(i,3)=Varbw_Air(i,3)
+cccz add gas code here to reset the flux, before future adjustment via mulch and runoff
+       do jjj=1,NumG
+        Varbg_Mulch(i,jjj,1)=Varbg_Air(i,jjj,1)
+        Varbg_Mulch(i,jjj,2)=Varbg_Air(i,jjj,2)
+        Varbg_Mulch(i,jjj,3)=Varbg_Air(i,jjj,3)
+        Varbg(i,jjj,1)=Varbg_Air(i,jjj,1)
+        Varbg(i,jjj,2)=Varbg_Air(i,jjj,2)
+         Varbg(i,jjj,3)=Varbg_Air(i,jjj,3)
+       enddo
+
+	  enddo
+        g_vapor(:,:)=0.0
        if (residueApplied.le.0) then
          return
        endif
@@ -517,7 +527,7 @@ cccz need to compute the correct input
        
 cccz just run the following subroutines once to initialize them       
         aaaa=WQ_CERES_MULCH(-5000.0D0,rho_mulch_b,0.1D0,lInput)    ! the CERES model is based on bulk mulch instead of solid, so there is no need for a more conversion based on "f_mulch_pore"
-        aaaa=WH_CERES_MULCH(0.01,rho_mulch_b,0.1D0,lInput)
+        aaaa=WH_CERES_MULCH(0.01D0,rho_mulch_b,0.1D0,lInput)
         waterCapaIni=WC_CERES_MULCH(-5000.0D0,rho_mulch_b,0.1D0,lInput)
         thMulchSat=WQ_CERES_MULCH(-0.000001D0,rho_mulch_b,0.1D0,0)
         call MulchDecomposition()
@@ -1751,7 +1761,7 @@ c    solid/liquid part: no need to change, they will make balance with the vapor
      &   *(thickPerLayer(k)/100.0D0)/LocalStep                   ! rate to saturate the vapor portion (g/m^2/day)
      &   *f_mulch_pore                                           ! cast the rate to gas phase of the mulch    
 cccz water diffusivity calculation: intrinsic diffusivity * temperature effects (Kimball et al., 1976; Lai et al., 1976)
-        VaporDiff_mulch(k,n)=2.35D-5*                        ! 2.35=(2.29_soil science+2.40_[campbell book])/2
+         VaporDiff_mulch(k,n)=2.35D-5*                        ! 2.35=(2.29_soil science+2.40_[campbell book])/2
      &   ((1.0D0+MulchEleTmpr_temp(k,n)/273.15D0)**1.75D0)
      &   *(f_mulch_pore**1.667D0)*86400.0D0                       ! Water Vapor diffusivity (m^2/day): only temperature and mulch dependent
 cccz water capacity: only for the mulch 'solid material' part, but need to be casted into the full mulch elements use f_mulch_pore

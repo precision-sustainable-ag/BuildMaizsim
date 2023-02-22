@@ -179,16 +179,7 @@ c  read at least one value from the line
       Do i=1,NumSol
           CPREC(i)=CLIMAT(4-MSW2-MSW3-i)
         Enddo
-        Endif
-cccz ----------------------------------------------
-cccz this part is removed from the "Gas branch"
-c      If(NumG.ne.0) then
-c        PG=CLIMAT(3-MSW2-MSW3+ISOL)
-c        Do i=1,NumG
-c          GAIR(i)=CLIMAT(3-MSW2-MSW3+ISOL+i)
-c        Enddo
-c      Endif
-cccz -----------------------------------------------
+      Endif
       IF(MSW7.eq.0) then
          CO2=CLIMAT(NCD) ! last one is always co2
          GAIR(1)=CO2   
@@ -614,12 +605,13 @@ C
           Do 30 I = 1,IPERD
             SINALT(I) = D12 + (D13*COS(HRANG(I)))
             SOLALT(I) = ASIN(SINALT(I))
-            SINAZI(I) = -COS(DEC)*SIN(HRANG(I))/COS(SOLALT(I))
+            SINAZI(I) = max(-1.D0,(-COS(DEC)*
+     &        SIN(HRANG(I))/COS(SOLALT(I))))
  30       Continue
           D18 = 0.0
           Do 60, I = 1,IHPERD
             SOLAZI(I) = PI + ASIN(SINAZI(I))
-            If (.NOT.((D18.GT.0.0).OR.(D18.LT.0.0))) then
+            if(.NOT.((D18.GT.0.0).OR.(D18.LT.0.0))) then
               D19 = HRANG(I) - 0.01
               TESAZI = PI + ((ASIN(-COS(DEC)*SIN(D19))
      &       /(COS(ASIN(D12 + (D13*COS(D19)))))))
@@ -874,7 +866,6 @@ cccz make some initialization
 cDT 4-22-2011 assume 10% of et is minimum from a covered node
 cccz this PSh expression is different from the hour.for one, and it has stronger lower boundary
           PSh=max(0.0,FSh(i,xBSTEM,SHADE,xS,ic))
-
 C
 C  CALCULATE THE ALBEDO OF THE EXPOSED SOIL CELLS
 C

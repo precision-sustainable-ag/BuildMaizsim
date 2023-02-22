@@ -12,7 +12,7 @@
       Include 'puweath.ins'
       include 'PuSurface.ins'
       
-      Double precision A,B,C
+      Double precision A,B,C, B_1, A_1
       Double precision dt,dtOld,t,tOld,PI,DPI,F2
       real ATG,HSP
 cccz move it to "PuSurface.ins" for public use 
@@ -31,21 +31,18 @@ cccz  Double precision CriticalH, CriticalH_R
      !                thR(NMatD),hSat(NMatD),
      !                isat(NumBPD),FreeD
       If (lInput.eq.0) goto 11  
-       FreeD=.true.
-       CriticalH=-0.01D0
+        FreeD=.true.
+        CriticalH=-0.01D0
 c       CriticalH_R=0.01D0
   
-          hOld(:) = hNew(:)
-          hTemp(:) = hOld(:)
-          RO(:)=0.0
- 
+        hOld(:) = hNew(:)
+        hTemp(:) = hOld(:)
+        RO(:)=0.0
 *
-  
-          ConAxz(:)=0.
-          ConAxx(:)=1.
-          ConAzz(:)=1.
+        ConAxz(:)=0.
+        ConAxx(:)=1.
+        ConAzz(:)=1.
       
-
       Explic=.false.
 *
       im=50
@@ -97,6 +94,16 @@ C
       tOld = Time
       t=Time
       dt=Step
+      
+cccz set the auto irrgation part before the iteration
+      do k=1, NumBp
+        i=KXB(k)
+        if(abs(CodeW(i)).eq.4) then
+           Q(i)=Q(i)+Qautoirrig(i)
+           if (Q(i).gt.0.0) CodeW(i)=-4  !cccz make sure bc changes if Qn goes > 0 (infiltration) after adding the autoirrigation
+        endif
+      enddo
+      
 
      
 c

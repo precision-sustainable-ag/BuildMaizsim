@@ -242,7 +242,7 @@ cccz coefficient for first order dynamics (decomposition equation)
         close(21)
 cccz need to calculate a TUpperL_mulch/TLowerL_mulch
 c    just need to run the function once 
-          bbbb=WQ_CERES_MULCH(-100.0D0,0.1,0.1,-1)
+          bbbb=WQ_CERES_MULCH(-100.0D0,0.1D0,0.1D0,-1)
           LocalFlag_MulchDecomp_Start=0 
           LocalFlag_MulchDecomp_FinalAssign=0
          if(Crit_Level.eq.0) then ! that means we do not want to have decomposition
@@ -702,6 +702,7 @@ c the data exchange interface between mulch N to soil N
 c should adjust the unit here before leaving this module, so soilN model can take them as source/sink
 c        Nmine_total_decomp   [g]     total amount of mineralized N, can be >0, =0, <0 (soil to mulch N flux) -> add to soil mineral N pool
 c        Nhumi_total_decomp   [g]     total amount of humified N -> add to soil humified N pool
+cdt we need to use BD here to convert to ug/cm3 volume for both.
 cccz we need to assign N to soil here, so use "SurNodeIndex" instead of "SurNodeIndex_M"
        local_soil_mass=0.0D0
        do i=1,NumNP
@@ -713,15 +714,16 @@ cccz we need to assign N to soil here, so use "SurNodeIndex" instead of "SurNode
           qRight=SurfNodeNodeIndexH(kk)
           local_soil_mass=nodeArea(qRight)*BlkDn(MatNumN(qRight))   ! can be "BlkDn(1)" is because we are always on soil surface
 c    add the mineral N from mulch to an array, which will be added to BNO3 in soilnden.for
+c soilNden needs ug/cm3 of total volume =  N * width/total width /soil mass *BD =ug cm3
           NO3_from_residue(qRight)=
      &       real(Nmine_total_decomp*Width(qLeft)/totalMulchWidth
-     &        /local_soil_mass
-     &        *1.0D6)         
+     &        /nodeArea(qRight)
+     &        *1.0D6)      
 c    add the humified N from mulch to soil surface nodes 
           Nh(qRight)=Nh(qRight)
      &       +real(Nhumi_total_decomp*Width(qLeft)/totalMulchWidth
-     &        /local_soil_mass
-     &        *1.0D6)  
+     &        /nodeArea(qRight)
+     &        *1.0D6)    
        enddo
           
 cccz ---------------------------- output of C (whole surface) -------------------------------------------------------- 
@@ -787,7 +789,7 @@ cccz determine the total mulch C and mulch N
         enddo
        enddo
        totalMulchC_final=totalMulchC_final*PC_mulch
-cccz assign mulch C and N to soil pools
+cccz assign mulch C and N to soil pools - convert to ug/cm3 area 
        do kk=1,SurNodeIndex
           qLeft=SurfNodeSurfIndexH(kk)
           qRight=SurfNodeNodeIndexH(kk)
@@ -795,14 +797,14 @@ cccz assign mulch C and N to soil pools
 c    add the C from mulch to soil surface nodes
           CL(qRight)=CL(qRight)
      &       +real(totalMulchC_final*Width(qLeft)/totalMulchWidth
-     &       /local_soil_mass
-     &       *1.0D6)                                                ! convert to "ug per g of soil"
+     &       /nodeArea(qRight)
+     &       *1.0D6)                                              ! convert to "ug per g of soil"
           CL_old(qRight)=CL(qRight)
 c    add the N from mulch to soil surface nodes
           NL(qRight)=NL(qRight)
      &       +real(totalMulchN_final*Width(qLeft)/totalMulchWidth
-     &        /local_soil_mass
-     &        *1.0D6)  
+     &        /nodeArea(qRight)
+     &        *1.0D6)
           NL_old(qRight)=NL(qRight)
 c    zero the N transfer variable when mulch is finished. 
           NO3_from_residue(qRight)=0.0D0

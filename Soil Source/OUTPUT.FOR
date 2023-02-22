@@ -12,11 +12,13 @@ C summary output variables
       Include 'public.ins'
       Include 'puweath.ins'
       Include 'puplant.ins'
+      Include 'nitvar.ins'
       include 'PuSurface.ins'
       Integer Plevel,e, hourCount
       
       Dimension temp(1000)
       Real PotentialSoilEvaporation, WidthT,Period
+      double precision startTime,endTime
       Real SeasonRainfall, SeasonPotenTranspiration,
      &     SeasonActualTranspiration, SeasonPotenSoilEvap,
      &     SeasonActualSoilEvap,SeasonActualInfil,
@@ -37,7 +39,7 @@ cccz output for runoff module
      &     Runoff,       ! cccz: original runoff base on RO: for each surface node, treat rainfall and surface runoff from upper stream as (potential) infiltraiton and this runoff represent the downstream water quantity, REPEATED CALCULATION INCLUDED   ----------  Good if you think soil surface is a "river"
      &     Runoff_02,    ! cccz: runoff leave the surface: for the whole surface, treat rainfall as input and count the water leave the surface, then distributed evenly along the surface, DO NOT INCLUDE REPEAT CALCULATION, BUT for furrow, CAN BE ZERO even surface water flow inside the domain ----------  Good if you think runoff effects out of your soil domain
      &     Runoff_03     ! cccz: runoff contribution @ each node: for each surface node, treat rainfall (exclude water income from upper-stream), the real runoff contribution for each node, then average over the soil surface ------- Good for the local runoff, but eventually averaged
-   
+
       Common /Outcom/NumPoint(2000),NodNum(2000,60),
      &     NumCell(1000),NumElPrint(1000,60),ModNum,
      &     Period, ETO, ActualTrans1,ActualSoilEvap,
@@ -51,12 +53,14 @@ cccz output for runoff module
      &     ActualInfil,ActualInfil_02,ActualInfil_03,
      &     FluxGas(NumGD),Surface_Gas_Flux(NumGD),
      $     SumArrayTh(NumNPD), hourCount,
-     $     nitrogenFlux
+     $     nitrogenFlux,Flux_drain
       Common /SurfaceWaterBalance/ 
      &     SurInput_Flux,Surface_Flux,Bottom_Flux,
      &     Runoff_Flux,Runoff_Terminal_Flux,
      &     Runoff_Left_Sum,Runoff_Right_Sum,
-     &     WaterStorage,WaterStorage_pre
+     &     WaterStorage,WaterStorage_pre,
+     &     startTime
+     
 
         
       t=Time
@@ -85,6 +89,8 @@ cccz Initialize the runoff block
 cccz
         
         ActualSoilEvap=0
+        PotentialSoilEvaporation=0.0
+        CumRain=0.0
         
 cccz Initialize the infiltration block
         ActualInfil=0
@@ -119,16 +125,21 @@ C    For gas flux calculation
         FLuxGas=0.0
         Surface_Gas_Flux=0.0
         
+        startTime=0.0
+        
 	  Open(81,file=NodeGraphics)
 	  open(82,file=ElemGraphics)  
-	  Open(83,file=SurfaceGraphics, recl=390)
-        Open(84,file=FluxGraphics, recl=370)
-       open(99,file=MassBalanceRunoffFileOut,status='unknown',recl=250)
-C G03 file  node graphics       
+	  Open(83,file=SurfaceGraphics, recl=450)
+        Open(84,file=FluxGraphics)
+        Open(85,file=OrganicMatterGraphics,recl=300)
+       open(99,file=MassBalanceRunoffFileOut, recl=250)
+ 
+c NodeGrpahics       
       Write(81,5) "Date_time,", "Date,", "X,", "Y,", "hNew,","thNew,",
-     &  "VZ,", "VX,","Q,", "ConcN,", "Temp,","Area,",
-     &   "GasConc1,","GasConc2"  
-C G04 file  Element graphics (really root now)   
+     &  "Vx,", "Vy,", "Q,", "NO3N,", "NH4N,","Temp,","Area,", 
+     &  "CO2Conc," , "O2Conc"
+
+c Element Graphics     
       Write(82,6) "Date_time,", "Date,", "X,", "Y,", "Node,", 
      &      "RMassM,","RMassY,", "RDenM,", "RDenY,",
      &      "WaterSink,", "NitSink,", "GasSink"
@@ -136,15 +147,24 @@ C G05 file  Surface Graphics
       Write(83,20) "Date_time,", "Date,", "PSoilEvap,", 
      &      "ASoilEVap,", "PET_PEN,","PE_T_int,","transp,",
      &      "CumRain,","infil,","FLuxAct,", "Drainage,",
-     &      "Nitro_drain,","Runoff,",
+     &       "N_Leach,","Runoff,",
      &      "cover,","PSIM,", "SeasPSoEv,","SeasASoEv," ,"SeasPTran,",
-     &      "SeasATran,","SeasRain,","SeasInfil" 
-C G06 file  Flux graphics       
+     &      "SeasATran,","SeasRain,",    
+     &      "SeasInfil,","CO2FLux,","O2FLux"
+
+c Flux Graphics       
        Write(84,20) "Date_time,", "Date,","Flux,","SoilEA,",
-     &   "RNS,","RNC,","WATPOT,","WATACT,","WATRAT,", "UpwardLW,",
+     &   "RNS,", "WATTSM,","RNC,","WATPOT,","WATACT,",
+     &    "WATRAT,", "UpwardLW,",
      &   "DifWat,","Cloud,","Shadow,","DIfInt,","Rowinc,", "PARInt,",
-     &   "RADInt,","CumuFlux,","GasFlux1,","GasFlux2"
-C surface runoff file - ToDo rename to G08 (carbon is G07)       
+     &   "RADInt"
+
+c Organic Matter Graphics
+
+       Write(85,21) "Date_time,", "Date,", "X,", "Y,", "Humus_N,",
+     &               "Humus_C,", "Litter_N,", "Litter_C,",
+     &            "Manure_N,", "Manure_C,", "Root_N,", "Root_C"
+c Runoff Mass Balance     
 cccz initialize for surface runoff
        write(99,'(8A20)') 'time','Date','Rainfall','Inifiltration',
      &    'Runoff@end', 'WaterStorage', 
@@ -177,6 +197,10 @@ C Potential values:
 * 6/2016 DT changed CumRain sum to use varBW(i,1) which is actual rain.
 * Actual infiltration, after accounting for evap is calculated in ActualInfil
 
+cccz We change the usage of VarBW and VarBW_Record
+cccz VarbW is the one adjusted with the runoff module, while VarBW_Record is the one from weather calculation
+        cRoot=0.0
+        nRoot=0.0
 cccz We change the usage of VarBW and Varbw_Air
 cccz VarbW is the one adjusted with the runoff module, while Varbw_Air is the one from weather calculation
         do i=1,NumBp
@@ -219,7 +243,6 @@ c case for rainfall
           if (abs(CodeW(n)).eq.4) then
             ActualInfil=ActualInfil+max(0.0,Qact(n))*step
             ActualInfil_03=ActualInfil_03+max(0.0,Qact(n))*step
-
 cccz calculation of runoff
             Runoff=Runoff+RO(n)*step
             
@@ -264,6 +287,8 @@ cccz calculation of terminal flux for mass balance in runoff module
      &     +abs(RunoffLeft+RunoffLeft_Efflux)*step
           Runoff_Right_Sum=Runoff_Right_Sum
      &     +abs(RunoffRight+RunoffRight_Efflux)*step
+cccz calculation is done, just do an assignment         
+          Runoff_02=Runoff_Terminal_Flux
 
           
           if(DailyOutput.eq.1) then
@@ -275,11 +300,12 @@ cccz calculation of terminal flux for mass balance in runoff module
           if (DailyOutput.eq.1) then
              SumArrayTh=SumArrayTh/Real(hourCount)
            endif
+ 
         call caldat(iday,mm,id,iyyy) 
         write (date,'(i2.2,A1,i2.2,A1,i4.4)') mm,'/',id,'/',iyyy  
-          Call ArrNodOut (Date,x,y,NumNP,NumEl,t,NumElD,hNew,
-     !                   ThNew,vz,vx,Q,Conc(1,1),Tmpr,g(1,1), 
-     !      g(1,2),ppm_to_ugGasCm3air(1),NumG, NodeArea)
+          Call ArrNodOut (Date,x,y,NumNP,t,hNew,
+     !      ThNew,vz,vx,Q,Conc(1,1),NNH4,Tmpr,g(1,1), g(1,2),
+     !      ppm_to_ugGasCm3air,NumG, NodeArea)
         iitime=int(time)
         diff=abs(time-int(time))
         If((NShoot.ne.0).and.(abs((time-int(time))).gt.(0.99))) 
@@ -287,8 +313,25 @@ cccz calculation of terminal flux for mass balance in runoff module
              Call ArrRootOut (Date,x,y,t, NumNP,RMassM,RMassY,
      !            RDenM, RDenY, Sink,
      !            cSink(1,1),gSink(1,1))
-            !Call OutToDB(Sink(1))
-        Endif
+          ! add calcs of root mass in cell as ppm *(g/g)
+            
+               
+        Endif 
+          ! calculate N and C in roots (ug/cm3 soil) for output
+          ! note that roots are g/cm3 of soil
+          ! no need to use BD
+         DO n=1, NumNP
+            m=matnumN(n)
+            cRoot(n)=RMassM(n)*cContentRootM
+            cRoot(n)=cRoot(n)+RMassY(n)*cContentRootY
+            nRoot(n)=RMassM(n)*nContentRootM
+            nRoot(n)=nRoot(n)+RMassY(n)*nContentRootY
+         end do
+            cRoot=cRoot*1e6
+            nRoot=nRoot*1e6
+            
+          Call ArrOrganicMatterOut(Date,x,y,NumNP,t,Ch,Nh,
+     !       Cl,Nl, Cm, Nm, cRoot, nRoot)
         tNext(ModNum) = time + Period
 C      
 * This code operates hourly to output data on the surface nodes
@@ -309,9 +352,6 @@ cccz because WATERSTORAGE is not a cumulative value, so we just do it once befor
            WaterStorage=WaterStorage+0.5D0
      &      *(slopeCoord(i+1,1)-slopeCoord(i,1))*(h_Pond(i+1)+h_Pond(i))
          enddo 
-         
-         
-
 cccz
 cccz calculation is done, just do an assignment         
           Runoff_02=Runoff_Terminal_Flux
@@ -329,15 +369,21 @@ cccz unit [water:width(cm)*flux(cm/day)*timestep(day)]/EOMult[0.5 or 1]/[populat
               PotentialSoilEvaporation=PotentialSoilEvaporation
      &        /EOMult/poprow*100.0D0
               ActualSoilEvap=ActualSoilEvap/EOMult/poprow*100.0D0
-              FluxAct=FluxAct/EOMult/poprow*100.0D0
-              Runoff=Runoff/EOMult/poprow*100.0D0
-              CumRain=CumRain/EOMult/poprow*100.0D0
-cccz DT: you change the name of bottomflux to Flux_Drain, what about fix it here
+              !ActualInfil=ActualInfil/EOMult/poprow*100
+              !FluxAct=FluxAct/EOMult/poprow*100
+              !Runoff=Runoff/EOMult/poprow*100
+              !CumRain=CumRain/EOMult/poprow*100
+              !bottomFlux=bottomFlux/EOMult/poprow*100
+              !(/RowSP/2) gets us per cm2 now for 10 minute period
+              !*6 gives us one hour
+cccz              ActualInfil=ActualInfil/(RowSP/2)*10*24
+cccz              FluxAct=FluxAct/(RowSP/2)*10*24
+cccz              Runoff=Runoff/(RowSP/2)*10*24
+cccz              CumRain=CumRain/(RowSP/2)*10*24
 cccz              bottomFlux=bottomFlux/(RowSP/2)*10*24    !cm/cm2/day
-cccz              CumulativeFlux=CumulativeFlux+bottomFlux
-              Flux_drain=Flux_drain/EOMult/poprow*100.0D0
-              nitrogenFlux=nitrogenFlux/EOMult/poprow*100.0D0
-              CumulativeFlux=CumulativeFlux+Flux_drain
+
+      
+              FluxAct=FluxAct/EOMult/poprow*100.0D0
               
 cccz the averaged process for actual infiltraiton
               ActualInfil=ActualInfil/EOMult/poprow*100.0D0
@@ -349,7 +395,9 @@ cccz the averaged process for runoff
               Runoff_02=Runoff_02/EOMult/poprow*100.0D0
               Runoff_03=Runoff_03/EOMult/poprow*100.0D0  
 cccz
-
+              CumRain=CumRain/EOMult/poprow*100.0D0
+              Flux_drain=Flux_drain/EOMult/poprow*100.0D0   !cccz unit [water:width(cm)*flux(cm/day)*timestep(day)]/EOMult[0.5 or 1]/[population/distance(cm)]
+              CumulativeFlux=CumulativeFlux+Flux_drain
 
 CDT distribute runoff back into Q This makes it uniform. implement this later
 
@@ -397,11 +445,11 @@ C
           SeasonPotenSoilEvap=SeasonPotenSoilEvap+
      &       PotentialSoilEvaporation
           SeasonActualSoilEvap=SeasonActualSoilEvap+ActualSoilEvap
-          
-
+C        Nitrogen flux conversion from g per slab to g per plant   
+         nitrogenFlux= nitrogenFlux/EOMult/poprow*100.0D0
 C     Gas unit conversion to ugCo2/cm2
           Surface_Gas_Flux=Surface_Gas_Flux/EOMult/poprow*100.0D0    ! Unit ugCo2 per plant area
-          
+         call CPU_TIME(endTime)  
          Write(83,10) t,Date,PotentialSoilEvaporation, 
      &               ActualSoilEvap,p_ET_EO,
      &              p_ET, CurrentTrans,CumRain,ActualInfil,FLuxAct,
@@ -411,14 +459,16 @@ cccz     &              bottomFlux, Runoff,cover, PSIM, SeasonPotenSoilEvap,
      &              SeasonPotenSoilEvap,
      &              SeasonActualSoilEvap, SeasonPotenTranspiration,
      &               SeasonActualTranspiration,  SeasonRainfall,  
-     &              SeasonActualInfil
-        
+     &              SeasonActualInfil,
+     &              (Surface_Gas_Flux(jjj),jjj=1,NumG),
+     &              (endTime-startTime)
+        call CPU_TIME(startTime) 
         
         Write(84,13) t,date,bottomflux,ActualSoilEvap, Wattsm(itime),
      &     RNS,RNC,WATPOT,WATACT, WATRAT,RNLU,
      &     Difwat(itime),Cloud,Shadow(itime),Difint(itime),
-     &      RowInc(itime),Parint(itime), Radint(itime),
-     &     (Surface_Gas_Flux(jjj),jjj=1,NumG)              ! Unit ugCo2 per plant area              
+     &      RowInc(itime),Parint(itime), Radint(itime)
+     &                  ! Unit ugCo2 per plant area              
         
         write(99,'(1F12.4,A12,F14.4,F14.4,F14.4,F14.4,F14.4,F14.4)')    
      &    time, date, SurInput_Flux, Surface_Flux, Runoff_Terminal_Flux,
@@ -456,6 +506,7 @@ cccz ---------------------- finish mulch printing --------------------------
 	  CumRain=0.0
         nitrogenFLux=0.0
 	  PotentialSoilEvaporation=0.0
+
 cccz reset runoff values
 	  Runoff=0.0
         Runoff_02=0.0
@@ -486,16 +537,17 @@ C*** FROM HourlyOut.for END
            
       Return
 C10    Call errmes(im,il)
-C format 5 is water, 6 is roots
-  5   Format (1x,A12, T20,A7,T37,A2,T47,A2, T56,A5,T68,A6,T82,A3,T90,
-     &     A3,T102,A2, T114, A6, T126, A5, T135, A5, 
-     &     T149, A9, T162, A9)   ! format for nodal data header
+C format 5 is water, 6 is roots Vy is the last on on this lin
+  5   Format (1x,A12, T20,A7,T37,A2,T47,A2, T56,A5,T68,A6,T82,A3,T94,
+     &     A3,T105,A2, T117, A6, T129, A6, T141, A5, 
+     &     T152, A5,T165,A8,T176,A8 )   ! format for nodal data header
   6   Format (1x,A16,T20,A5,T36,A2,T46,A2,T56,A5,T65,A7,T78,A7, T90,A6,
      &        T102, A6, T112, A11, T124, A8, T136, A8)
- 10   Format (1x,F17.6,',', A15,',',9(F16.3, ','), F10.6, ',',
-     &        8(F16.3, ','),F16.3)  !format for flux data
- 13   Format (1x,F17.6,',',A15,',',17(F16.3, ','), F16.3)  ! format for second flux data [G06]
- 20   Format (1x,22A16)              !format for flux header
+ 10   Format (1x,F17.6,',', A15,',',9(F16.3, ','), F14.6, ',',
+     &        11(F16.3, ','),F16.4,',',F16.5)  !format for flux data
+ 13   Format (1x,F17.6,',',A15,',',15(F16.3, ','), F16.3)  ! format for second flux data [G06]
+ 20   Format (1x,24A16)              !format for flux header
+ 21   Format (1x,12A16)           ! format for Organic Matter header
 2103  Format (1x,A12,T20,A12,T49,A1,T64,A1,T76,A10,T95,A10,T109,A10)
 2104  Format (1x,F17.6,',',A15,',',4(F16.4,','),F16.4)     
       
@@ -523,25 +575,53 @@ C      Endif
       Return
       End      
 C/***************************************************/
-      subroutine ArrNodOut(Date,x,y,NumNP,NumEl,t,NumElD,Head,      
-     !          ThetaArr, vzArr,vxArr,QArr,ConcArr,TemprArr,
-     !           gArr1 ,gArr2,ppm_to_ugGasCm3air,NumG, Area)
+      subroutine ArrNodOut(Date,x,y,NumNP,t, Head,      
+     !          ThetaArr, vzArr,vxArr,QArr,ConcArr,NH4Arr,TemprArr,
+     !          gArr1,gArr2,ppm_to_ugGasCm3air, NumG,areaArr)
       Character*10 Date
+      Real x,y,t,Head,ThetaArr,vzArr,vxArr,QArr,ConcArr,NH4Arr,TemprArr,
+     !      gArr1,gArr2, ppm_to_ugGasCm3air, areaArr
+      Integer NumNP,NumG, n
+
       Dimension Head(NumNP),x(NumNP),y(NumNP),
      !         ThetaArr(NumNP), vzArr(NumNP),vxArr(NumNP),QArr(NumNP),
-     !         ConcArr(NumNP),TemprArr(NumNP),gArr1(NumNP,NumG) ,
-     !         gArr2(NumNP,NumG), ppm_to_ugGasCm3air(NumG),
-     !         Area(NumNP)
-
+     !         ConcArr(NumNP),TemprArr(NumNP),NH4Arr(NumNP),
+     !         gArr1(NumNP), gArr2(NumNP),ppm_to_ugGasCm3air(NumG),
+     !         areaArr(NumNP)
+        !MyDate=ToCalendarDate(mm,id,iyyy)
         Do n=1,NumNP
           Write(81,140)t, date, x(n),y(n),Head(n),ThetaArr(n),
-     !     vzArr(n),vxArr(n),QArr(n),ConcArr(n),TemprArr(n),
-     !      Area(n), gArr1(n,1)*ppm_to_ugGasCm3air(1) ,
-     !     gArr2(n,1)*ppm_to_ugGasCm3air(2)  
+     !     vzArr(n),vxArr(n),QArr(n),ConcArr(n),NH4Arr(n), 
+     !     TemprArr(n), areaArr(n),
+     !     gArr1(n)*ppm_to_ugGasCm3air(1),
+     !     gArr2(n)*ppm_to_ugGasCm3air(2) 
           !convert the initial concentration of CO2 and O2 in [ug/cm3 air] to ppm
         Enddo
- 140   format(1x, f14.6,',', a12,',', 2(f11.2,','),9(G11.3,','),G11.3)
+ 140   format(1x, f14.6,',', a12,',', 2(f11.2,','),10(G11.3,','),G11.3)
       Return
       End
   
-  
+      subroutine ArrOrganicMatterOut(Date,x,y,NumNP,t,
+     !   HumusCArr, HumusNArr, LitterCArr, LitterNArr,
+     !    ManureCArr, ManureNArr, RootCArr, RootNArr)
+      character*10 Date
+      Integer NumNP
+      Real   t
+      Real HumusCArr, HumusNArr, LitterCArr, LitterNArr,
+     !      ManureCArr, ManureNArr,RootCArr, RootNArr, 
+     !      x, y 
+      Dimension HumusCArr(NumNP), HumusNArr(NumNP), LitterCArr(NumNP), 
+     !       LitterNArr(NumNP), ManureCArr(NumNP), ManureNArr(NumNP),
+     !        RootCArr(NumNp), RootNArr(NumNP), 
+     !       x(numNP),y(numNP)
+c note output units are g/cm3 soil volume      
+      
+        Do n=1, NumNP
+              Write(85,140) t, date, x(n),y(n), HumusNArr(n), 
+     !         HumusCArr(n), 
+     !        LitterNArr(n), LitterCArr(n), ManureNArr(n), 
+     !        ManureCArr(n), RootNArr(n), RootCArr(n)
+         EndDo 
+  140   format (1x, F14.6,',', a12,',', 8(F11.2,','),F11.2, ',',F11.2)
+       Return
+       End

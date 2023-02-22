@@ -66,7 +66,7 @@ cccz          endif
         dt=dmin1(dtOpt,tFix-t)
 cdt  RunFlag is set by the crop model when the crop reaches maturity
 cdt can be overridden for a full year sim of RunToEnd>0
-      If ((abs(dt/t).lt.1.E-20).or.
+        If ((abs(dt/t).lt.1.E-20).or.
      !           ((RunFlag.eq.0).and.(RunToEnd.eq.0))) then
 	    write(*,*) 'Finished at',time
           Stop

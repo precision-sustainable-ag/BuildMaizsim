@@ -2,32 +2,32 @@
 [Basic_Mulch_Configuration]
 ********The mulch grid configuration********
 Minimal Grid Size for Horizontal Element
- 2 
+1/2/1900 
 ********Simulation Specifications (1=Yes; 0=No)********
 Only_Diffusive_Flux     Neglect_LongWave_Radiation      Include_Mulch_Decomputions
- 0             0             1 
+12:00:00 AM   12:00:00 AM   1/1/1900 
 [Mulch_Radiation]
 ********Mulch Radiation Properties********
 DeltaRshort DeltaRlong  Omega   epsilon_mulch   alpha_mulch
- 0.3           0.3           0.6           1             0.3 
+7:12:00 AM    7:12:00 AM    2:24:00 PM    1/1/1900      7:12:00 AM 
 [Numerical_Controls]
 ********Picard Iteration COntrol********
 Max Iteration Step (before time step shrinkage) Tolerence for Convergence (%)
- 10            0.01 
+1/10/1900     12:14:24 AM 
 [Mulch_Mass_Properties]
 ********Some Basic Information such as density, porosity and empirical parameters********
 VRho_Mulch g/m3  Pore_Space  Max Held Ponding Depth
- 400000        0.8           1 
+2/27/2995     7:12:00 PM    1/1/1900 
 [Mulch_Decomposition]
 ********Overall Factors********
 Contacting_Fraction Feeding_Coef
- 0.6           0.1 
+2:24:00 PM    2:24:00 AM 
 The Fraction of Three Carbon Formats (Initial Value)
  Carbonhydrate(CARB)    Holo-Cellulose (CEL)   Lignin (LIG)
- 0.2           0.7           0.1 
+4:48:00 AM    4:48:00 PM    2:24:00 AM 
 The Fraction of N in Three Carbon Formats (Initial Value)
  Carbonhydrate(CARB)    Holo-Cellulose (CEL)   Lignin (LIG)
- 0.08          0.01          0.01 
+1:55:12 AM    12:14:24 AM   12:14:24 AM 
 The Intrinsic Decomposition Speed of Three Carbon Formats (day^-1)
  Carbonhydrate(CARB)    Holo-Cellulose (CEL)   Lignin (LIG)
- 0.425         0.24          0.0228 
+10:12:00 AM   5:45:36 AM    12:32:50 AM 

@@ -13,34 +13,39 @@ c     for writing frequency to output
       Daily=0
       Hourly=0
       AutoIrrigateF=0
+      cContentRootM=0.40
+      cContentRootY=0.40
+      nContentRootM=0.012
+      nContentRootY=0.19
       open(9,file=RunFile,status='old', ERR=10)
-	read(9,'(A132)')WeatherFile
-	read(9,'(A132)')TimeFile
-	read(9,'(A132)')BiologyFile
-	read(9,'(A132)')ClimateFile
-	read(9,'(A132)')NitrogenFile
-	read(9,'(A132)')SoluteFile
-      read(9,'(A132)')ParamGasFile
-	read(9,'(A132)')SoilFile
-      read(9,'(A132)')MulchFile
-	read(9,'(A132)')ManagementFile
-      read(9,'(A132)')DripFile
-	read(9,'(A132)')WaterFile
-	read(9,'(A132)')WaterBoundaryFile
-	read(9,'(A132)')InitialsFile
-	read(9,'(A132)')VarietyFile
-	read(9,'(A132)')GeometryFile
-      read(9,'(A132)')NodeGeomFile   
-      read(9,'(A132)')MassBalanceFile
-	read(9,'(A132)')PlantGraphics
-      read(9,'(A132)')LeafGraphics 	
-       read(9,'(A132)')NodeGraphics   
+	read(9,5)WeatherFile
+	read(9,5)TimeFile
+	read(9,5)BiologyFile
+	read(9,5)ClimateFile
+	read(9,5)NitrogenFile
+	read(9,5)SoluteFile
+      read(9,5)ParamGasFile
+	read(9,5)SoilFile
+      read(9,5)MulchFile
+	read(9,5)ManagementFile
+      read(9,5)DripFile
+	read(9,5)WaterFile
+	read(9,5)WaterBoundaryFile
+	read(9,5)InitialsFile
+	read(9,5)VarietyFile
+	read(9,5)GeometryFile
+      read(9,5)NodeGeomFile   
+      read(9,5)MassBalanceFile
+	read(9,5)PlantGraphics
+      read(9,5)LeafGraphics 	
+       read(9,5)NodeGraphics   
 C15    Continue 
-      read(9,'(A132)')ElemGraphics
+      read(9,5)ElemGraphics
 C25    Continue
-      read(9,'(A132)')SurfaceGraphics
+      read(9,5)SurfaceGraphics
 C35    Continue
-      read(9,'(A132)')FluxGraphics
+      read(9,5)FluxGraphics
+      read(9,5)OrganicMatterGraphics
 C45    Continue
       read(9,'(A132)')MassBalanceFileOut
       read(9,'(A132)')MassBalanceRunoffFileOut
@@ -147,7 +152,7 @@ c dt
         Movers(i)=0
       Enddo
       tatm=1.E+31
-      
+ 5    format(A256)     
       Return
  8    Write(*,*) 'Error in initials file'
       goto 11     

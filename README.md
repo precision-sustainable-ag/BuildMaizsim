@@ -4,6 +4,7 @@ Building the image installs compilers and  compiles the model:
 
 **docker build --tag maizsimbuild:1.0 . **
 
+make sure there is a space between the 1.0 and the '.' or docker will give an error
 running the image will create the container and launch the model and run a simulation:
 
 **docker run maizsimbuild:1.0**

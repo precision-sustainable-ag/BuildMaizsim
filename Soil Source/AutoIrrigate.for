@@ -15,19 +15,34 @@ C it is called once a day, at 5:00 am
        Real Bii(3),Cii(3), AE, Sum1, Sum2
        Integer i, j, l
        Common /Auto/ ModNum
-            
+       
+       
+     
+     
        If(lInput.eq.1) then
+C
 C  Initialize 
+C
         NumMod=NumMod+1
         ModNum=NumMod
         tNext(ModNum) = time + 1
-        AutoIrrAmt=IR
+cccz initialize to zero
+        do i=1,NumNPD
+          Qautoirrig(i)=0.0D0
+        enddo
+cccz
+        
        End If
 
        if (AutoIrrigateF.eq.0.and.lInput.lt.1)  tNext(ModNum)=1.0e10
        
 11     If(abs(time-tNext(ModNum)).lt.0.001*Step.and.
      & AutoIrrigateF.gt.0) then
+cccz reset to zero every time to prevent "infinite irrigation"         
+        do i=1,NumNPD
+          Qautoirrig(i)=0.0D0
+        enddo 
+cccz
   
         ThetaAvail50=0.0
         ThetaFull50 =0.0
@@ -76,6 +91,7 @@ C  Initialize
            
 C      Auto irrigate if available water is less than 60%
 C  irrigation goes into Q values
+C TODO need to check code this was partially merged between the gas exchange and mulch versions
           If (AvailWaterRatio.lt.(0.60).and.lInput.lt.1) then
            do k=1, NumBp
             i=KXB(k)

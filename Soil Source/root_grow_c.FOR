@@ -33,9 +33,10 @@ C  ARE MOST FAVORABLE FOR GROWTH
 
 
 C  No Plant = No Root Activity
-      If(NShoot.eq.0.or.isGerminated.eq.0) Return
-C
-
+      If(NShoot.eq.0.or.isGerminated.eq.0) then       ! if nshoot=0 (before crop start and after harvest), root respiration=0
+       gSink_root=0
+      Return
+      end if 
 
 
 C   Taken from ACTGRO of GLYCIM

@@ -1,4 +1,7 @@
       Parameter (NumMulHLD=15, NumMulFluxD=2*NumMulHLD)
+cccz the following blocks are for irrigation
+       Double Precision Qautoirrig(NumNPD)
+       Common /SurWaterInput/ Qautoirrig
 
 
 cccz the following blocks are used for surface runoff
@@ -57,7 +60,7 @@ cccz Zhuangji Wang
      !        mulchThick,thresholdThick,TotalMulchMass,
      !        totalMulchWidth,f_mulch_pore,
      !        Mulch_Decompose_C,Mulch_Decompose_N,
-     !        CO2mass_2_Cmass, NO3mass_2_Nmass, NH4mass_2_Nmass,
+     !        CO2mass_2_Cmass, 
      !        slopeCoord_M(NumBPD,2),
      !        begin_mulch_date
       Integer SurNodeIndex_M, SurfMulchNodeSubIndex(NumBPD),
@@ -85,7 +88,7 @@ cccz Zhuangji Wang
      !        Frac_Decomp,CARB_mass,CELL_mass,LIGN_mass,
      !        CARB_N_mass,CELL_N_mass,LIGN_N_mass,TotalMulchMass,
      !        mulchLayer,ParMulch,DecompCtrl,
-     !        CO2mass_2_Cmass, NO3mass_2_Nmass, NH4mass_2_Nmass,
+     !        CO2mass_2_Cmass,  
      !        SurNodeIndex_M, SurfMulchNodeSubIndex, slopeCoord_M,
      !        Min_Hori_Ele_Size, SurNodeIndex_M_Match,
      !        begin_mulch_date, residueApplied,

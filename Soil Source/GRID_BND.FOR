@@ -264,7 +264,9 @@ c     Nm(NumNP)   [ug/g soil]     ELEMENTAL N in soil organic fertilizer
 c     NNH4(NumNP) [ug/g soil]     Mineral N pool in the form of ammonium
 c     NNO3(NumNP) [ug/g soil]     Mineral N pool in the form of nitrate
 c
-c     CL(NumNP)   [ug/g soil]     ELEMENTAL C in soil organic matter    
+c     Cl(NumNP)   [ug/cm3]     ELEMENTAL C in the litter component of soil organic matter    
+c     Cm(NumNP)   [ug/cm3]     ELEMENTAL C in manure component of soil organic matter  
+c     Ch(NumNP)   [ug/cm3]     ELEMENTAL C in humus component of soil organic matter  
 cccz ----------------------------------------------------------------------------------
 
         Do j=1,NumNP
@@ -278,18 +280,20 @@ cccz ---------------------------------------------------------------------------
           NL_old(i)=NL(i)
           Cm_old(i)=Cm(i)
           Nm_old(i)=Nm(i)
-C     right now conc is ug NO3 per g soil. further conversions will be done in the solute mover initialization routine when we have water contents.
-c          NNO3_old(i)=Conc(i,1)  
-C   ammonia is input as ppm or ug /g soil here we convert it to ug/cm3 or mg per liter of soil volume
-c          NNH4_old(i) =  NNH4(i)*blkdn(MatNumN(i))
+C     right now conc is input as ug NO3 per g soil. further conversions will be done in the solute mover initialization routine when we have water contents.
+
+C   ammonia is input as ppm or ug /g soil 
 
 cccz --------------------------------------------------------------------------------------------------------------------
 cccz update the assignment
-cccz the unit of Conc(i,1) is "ug NO3 per g soil", will need to updated to "ug NO3 per cm^3 soil water" in solmov
-cccz the unit of NNO3_old(i) should be "ug N per g soil", converted from Conc(i,1), i.e.,
-          NNO3_old(i)=Conc(i,1)*NO3mass_2_Nmass
-cccz the unit of NNH4(i) and NNH4_OLD(i) should be "ug N per g soil", conversion needed, i.e.,
-          NNH4(i)=NNH4(i)*NH4mass_2_Nmass
+cccz the unit of Conc(i,1) is input as  "ug NO3 per g soil", will be updated 
+c        to "ug NO3 per cm^3 soil water" in solmov
+cccz the unit of Conc is initially ug/g soil of NO3. Units of NNO3_old(i) is "ug N as NO3 per cm3 volume", 
+c     multiply by BD to get ug/ cm3 volume. then by molar mass to get N
+          NNO3_old(i)=Conc(i,1)*NO3mass_2_Nmass*Blkdn(MatNumN(i))
+cdt       NNH4 is input as ug/g soil (ppm). it is converted to ug /cm3 of soil for calculations          
+cccz the unit of NNH4(i) and NNH4_OLD(i) should be "ug N per cm3 volume", conversion needed, i.e.,
+          NNH4(i)=NNH4(i)*NH4mass_2_Nmass*Blkdn(MatNumN(i))
           NNH4_old(i)=NNH4(i)
 cccz --------------------------------------------------------------------------------------------------------------------
           TmprOld(i)=Tmpr(i)

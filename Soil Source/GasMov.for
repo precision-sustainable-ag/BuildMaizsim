@@ -1,7 +1,7 @@
       subroutine GasMover()
       Include 'public.ins'
       Include 'puweath.ins'
-      Double precision A,B,C,P,Sum,CGFLux
+      Double precision A,A_1,B,C,P,Sum,CGFLux
       Real bTort
       Integer gKod,newjjj
       Dimension A(MBandD,NumNPD),B(NumNPD),F(NumNPD),DS(NumNPD),

@@ -157,28 +157,28 @@
 		      CmBefore=0
 		      NNH4Before=0
 		      DenitBefore=0
-
+                
+cdt no need to use BD as units remain as g per unit volume
                 do i=1, Num_tillNodes                                 
-                    NhBefore=NhBefore+nodeArea(node_tillApplied(i))!Nh[ug N/g soil]*BulkDen[gSoil/cm3soil]=Nh[ug/cm3soil]over the tillage area
-     !              *Nh(i)*Blkdn(MatNumN(i))                          
+                    NhBefore=NhBefore+nodeArea(node_tillApplied(i))!Nh[ug N/Unit volume]=Nh[ug/cm3soil]over the tillage area
+     !              *Nh(i)                          
                     NLBefore=NLBefore+nodeArea(node_tillApplied(i))
-     !              *NL(i)*Blkdn(MatNumN(i))
+     !              *NL(i)
                     NmBefore=NmBefore+nodeArea(node_tillApplied(i))
-     !              *Nm(i)*Blkdn(MatNumN(i))
+     !              *Nm(i)
                     ChBefore=ChBefore+nodeArea(node_tillApplied(i))
-     !              *Ch(i)*Blkdn(MatNumN(i))
+     !              *Ch(i)
                     CLBefore=CLBefore+nodeArea(node_tillApplied(i))
-     !              *CL(i)*Blkdn(MatNumN(i))
+     !              *CL(i)
                     CmBefore=CmBefore+nodeArea(node_tillApplied(i))
-     !              *Cm(i)*Blkdn(MatNumN(i))
+     !              *Cm(i)
                     NNH4Before=NNH4Before+nodeArea(node_tillApplied(i))
-     !              *NNH4(i)*Blkdn(MatNumN(i))
+     !              *NNH4(i)
                     DenitBefore=DenitBefore
      !              +nodeArea(node_tillApplied(i))*denit(i)
-     !              *Blkdn(MatNumN(i))
                 end do
 		  !Average concentration
-		      NhAvg=NhBefore/tillArea                           !NhBefore[ug N/slab]/tillArea[cm2]= NhAvg[ug/unit volume]
+		      NhAvg=NhBefore/tillArea   !NhBefore[ug N/slab]/tillArea[cm2]= NhAvg[ug/unit volume]
 		      NLAvg=NLBefore/tillArea
 		      NmAvg=NmBefore/tillArea
 
@@ -191,16 +191,16 @@
 
 		  !Reassign this concentration back to the tilled nodes
                 do i=1, Num_tillNodes
-                    Nh(i)=NhAvg/Blkdn(MatNumN(i))                 !NhAvg[ug/unitVol]/BulkDen[gsoil/cm3soil]=Nh(i,1)[ug/gsoil]
-                    NL(i)=NLAvg/Blkdn(MatNumN(i))
-                    Nm(i)=NmAvg/Blkdn(MatNumN(i))
+                    Nh(i)=NhAvg                !NhAvg[ug/unitVol]
+                    NL(i)=NLAvg
+                    Nm(i)=NmAvg
 
-                    Ch(i)=ChAvg/Blkdn(MatNumN(i))
-                    CL(i)=CLAvg/Blkdn(MatNumN(i))
-                    Cm(i)=CmAvg/Blkdn(MatNumN(i))
+                    Ch(i)=ChAvg
+                    CL(i)=CLAvg
+                    Cm(i)=CmAvg
 
-                    NNH4(i)=NNH4Avg/Blkdn(MatNumN(i))
-                    Denit(i)=DenitAvg/Blkdn(MatNumN(i))
+                    NNH4(i)=NNH4Avg
+                    Denit(i)=DenitAvg
                 end do
 		  !Find the difference in the total  N before and after [For Debug]
 		      NhAfter=0
@@ -213,21 +213,21 @@
 		      DenitAfter=0
                 do i=1, Num_tillNodes
                     NhAfter=NhAfter+nodeArea(node_tillApplied(i))
-     !          *Nh(i)*Blkdn(MatNumN(i))                           
+     !          *Nh(i)                          
                     NLAfter=NLAfter+nodeArea(node_tillApplied(i))
-     !          *NL(i)*Blkdn(MatNumN(i))
+     !          *NL(i)
                     NmAfter=NmAfter+nodeArea(node_tillApplied(i))
-     !          *Nm(i)*Blkdn(MatNumN(i))
+     !          *Nm(i)
                     ChAfter=ChAfter+nodeArea(node_tillApplied(i))
-     !          *Ch(i)*Blkdn(MatNumN(i))
+     !          *Ch(i)
                     CLAfter=CLAfter+nodeArea(node_tillApplied(i))
-     !          *CL(i)*Blkdn(MatNumN(i))
+     !          *CL(i)
                     CmAfter=CmAfter+nodeArea(node_tillApplied(i))
-     !          *Cm(i)*Blkdn(MatNumN(i))
+     !          *Cm(i)
                     NNH4After=NNH4After+nodeArea(node_tillApplied(i))
-     !          *NNH4(i)*Blkdn(MatNumN(i))
+     !          *NNH4(i)
                     DenitAfter=DenitAfter+nodeArea(node_tillApplied(i))
-     !          *denit(i)*Blkdn(MatNumN(i))
+     !          *denit(i)
                 end do
 		      !---End of Nh,NL,Nm,Ch,CL,Cm,NNH4,Denit Redistribution-------
 		  

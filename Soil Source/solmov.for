@@ -107,6 +107,9 @@ C GR
 12          Continue
           Endif
 13      Continue
+C
+C  Recasting sinks 
+C
 cccz
 cccz zhuangji adopt node based expression
 cccz zhuangji: the previous sink recast use a concentration-based weight for "sink average"
@@ -367,7 +370,7 @@ C  SURFACE POND FOR TRANSPORT
          If (iabs(k).eq.4) then		
 			HNEWS=DMAX1(hNew(N),0.0D0)
 		    HOLDS=DMAX1(hold(N),0.0D0)
-               newjjj=1	
+		     newjjj=1	
 		     if (lOrt) newjjj = IADD(n)             
               A(newjjj,n)=A(newjjj,n)+Width(i)*HNEWS/dt
               B(n)=B(n)+Width(i)*Conc(n,jjj)*HOLDS/dt

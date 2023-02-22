@@ -21,6 +21,7 @@ c      Real PDWR_TOTAL   !for debugging
 	Real Wl,Wa,Wr,Wb; !Weighting parameters for root growth in grid used in Root_grow_c 
 	integer ISink;        ! Determines mechanism of nitrogen uptake by root
       Real InitialRootCellArea
+      integer t1,t2
 c	0  'passive root mass uptake' no kinetics
 c    1   Plant regulation diffusive and convective uptake
 c    2  'convective diffusive uptake no plant regulation (Constant IMax)
@@ -73,7 +74,6 @@ C
       Do n=1,NumNP
         YRL(n)=0.0D0                          ! length of young root in soil cell cm (old version)
         RGCF(n)=0.0D0                         ! root growth reduction factor
-        RUTDEN(n)=0.0D0                       ! length density of old root in soil cell cm/cm^2 (old version)
         iFavRoot(n)=0.0D0
 cccz start to move the nodeArea to GRID_BND file
 cccz        nodeArea(n)=0.0D0
@@ -169,7 +169,7 @@ c      EOMult=1.
 c      If(xBSTEM.le.xMin.or.xBSTEM.ge.xMax) EOMult=0.5
 cccz zhuangji EOMult is to mark if the plant is on the edge.
       
-      PSISM=PSISM/float(icount)
+      PSISM=PSISM/max(1.0,float(icount))
       PPSIL = -0.5
       PPSILT = -0.5
       TPLT = 2.0
@@ -263,22 +263,19 @@ C
          RGCF1 = ((TPRD(n)-MECHR)/2.0)-((PSIRD(n)-PSIS(n))/4.0)
 C
 C     CALCULATE PROPORTIONAL REDUCTION OF ROOT GROWTH CAUSED BY
-C     SOIL TEMPERATURE
+C     SOIL TEMPERATURE (using a beta function)
 C
-        RGCF2=1.0
-        IF (Tmpr(n).GE.33.0D0) THEN
-          RGCF2 = (Tmpr(n)/33.0D0)**(-1.66D0)
-        ELSE IF (Tmpr(n).LE.0.0) THEN
-          RGCF2 = 0.0
-        ELSE If (Tmpr(n).lt.18.0D0) THEN
-          RGCF2 = (Tmpr(n)/18.0D0)**(1.66D0)
-        ENDIF
+        RGCF2=tempStress(Tmpr(n))
+        
 
 C
 C   CALCULATE PROPORTIONIAL REDUCTION OF ROOT GROWTH CAUSED BY
 C   PARTIAL PRESSURE OF SOIL OXYGEN
 C
-        RGCF3 = (g(n,2) - 0.02)*7.14
+        RGCF3= oxyStress(g(n,2)*ppm_to_ugGasCm3air(2)/10000.)
+        
+        t1=(RGCF3.lt.1.0)
+        
 cccz the distance effects
         xDist = abs(x(n)-xBSTEM)
         yDist = abs(y(n)-yBSTEM)
@@ -294,7 +291,6 @@ cccz Zhuangji: AD
 c        RGCF5=(1.0-AMIN1(1.0,RMassY(n)/0.03))
          RGCF5=(1.0-AMIN1(1.0,(RMassY(n)+RMassM(n))/0.02))
          RGCF5=1.0D0
-         RGCF3=1.0D0
 C this one for nitrogen. Use the ratio between actual uptake of N and IMax
     
          dif=amax1(0.0,Conc(n,1)-CMin0(1))
@@ -320,7 +316,7 @@ c  pdwr = gr d-1 per cell
 c  dt 03/18/11 testing the incorporation of area
 
        if ((isEmerged.lt.1).and.(isGerminated.gt.0)) RGCF(n)=1.0
-           
+ 
 cccz only new root or the total root? Dt - use total root for now
         PDWR(n)=(RMassY(n)+RMassM(n))*ALPM*RGCF(n)*nodeArea(n)
 c        PDWR(n)=RMassY(n)*ALPM*RGCF(n)*nodeArea(n)
@@ -431,8 +427,7 @@ c when LAI !=0, then the total resistance equals to resistance in the soil plus
 c resistance of the xylum; here the xylum resistance is adopted as a constant: 6.67*1-E-3 molH2O m-2(leaf) s-1 MPa-1
 c to convert this value into the resistance value for a slab, we have to divide it by LAI and the area of the slab and 
 c convert MPa into bar, this is how we have 19.26//(LAI*rowsp)
-             
-             IF(LAI.EQ.0.0) Then
+            IF(LAI.EQ.0.0) Then
               WUPM(n) = (((PSIS(n) - PSILT)*nodeArea(n)
      &         *RDenM(n))/(SR(n) + RRRM + RVR(n)))
      &         *0.02275*(24.5 + Tmpr(n))
@@ -442,13 +437,18 @@ c convert MPa into bar, this is how we have 19.26//(LAI*rowsp)
      &         *0.02275*(24.5 + Tmpr(n))
              ELSE
              
-             WUPM(n)=(PSIS(n)-PSILT)/((SR(n)+RRRM+RVR(n))
-     &        /(nodeArea(n)*RDenM(n)*0.02275*(24.5+Tmpr(n)))
-     &        +19.26/(LAI*ROWSP))
-    
+             WUPM(n)=0.0
+             if (RDenM(n).GT.0.0) then
+               WUPM(n)=(PSIS(n)-PSILT)/((SR(n)+RRRM+RVR(n))
+     &           /(nodeArea(n)*RDenM(n)*0.02275*(24.5+Tmpr(n)))
+     &           +19.26/(LAI*ROWSP))
+             endif
+             WUPN(n)=0.0
+             if (RDenY(n).GT.0.0) then
              WUPN(n)=(PSIS(n)-PSILT)/((SR(n)+RRRY+RVR(n))
      &        /(nodeArea(n)*RDenY(n)*0.02275*(24.5+Tmpr(n)))
      &         +19.26/(LAI*ROWSP))
+             endif
      
              END IF       
 
@@ -464,8 +464,10 @@ C  CALCULATE GROWTH BY NEW ROOTS IF ROOTS GREW AT POTENTIAL
 C  RATE DURING PAST PERIOD. START WITH SOIL CELL WHERE CONDITIONS
 C  ARE MOST FAVORABLE FOR GROWTH
 C
+
       PCRTS = 0.       ! potential root carbon use  g day-1
       WUPTS = 0.       ! new root water uptake carbon all to root   g day-1
+      WUPRS = 0.
       SW10 = 0
       DO 90, n=1,NumNP
         n1=iFavRoot(n)
@@ -476,15 +478,18 @@ C
 C   DETERMINE TOTAL WATER UPTAKE BY ALL NEW ROOTS AND WEIGHTED
 C   AVERAGE SOIL WATER POTENTIAL WHEN:
 C   I. ROOTS GET ALL THE CARBON TRANSLOCATED
-C      
+C
+        WUPT(n1)=0.0
         IF(LAI.EQ.0.0) Then
         WUPT(n1) = (((PSIS(n1) - PSILT)*DRL(n1))
      &   /(SR(n1) + RRRY + RVR(n1)))
      &   *0.02275*(24.5 + Tmpr(n1))
         Else
-        WUPT(n1)=(PSIS(n1)-PSILT)/((SR(n1)+RRRY+RVR(n1))
-     &     /(DRL(n1)*0.02275*(24.5+Tmpr(n1)))
-     &     +(19.26/(LAI*ROWSP)))
+          if (DRL(n1).GT.0.0) then
+            WUPT(n1)=(PSIS(n1)-PSILT)/((SR(n1)+RRRY+RVR(n1))
+     &        /(DRL(n1)*0.02275*(24.5+Tmpr(n1)))
+     &       +(19.26/(LAI*ROWSP)))
+          endif
         EndIF
 
         IF (WUPT(n1).LE.0.0) WUPT(n1) = 0.0
@@ -763,4 +768,55 @@ C
       M=1
       RETURN
       END
+C 
+       Real Function oxyStress(O2)
 C
+CDT       function to simulate the effect of low oxygen content
+C  in flooded soils on root growth of aradopsis, it is from
+C van Dongen JT,et al.  Ann Bot. 2009 Jan;103(2):269-80.
+C  O2 is input as a percentage , 0 is full stress, 1 is no stress
+C  Using a MM equation
+C returns a number from 0 to 1
+       real O2,k, V, tmp
+       k=4.95
+       V=121.5
+       tmp=(V * O2)/(k + O2)
+       tmp=min(tmp,100.0)
+       tmp=max(tmp,0.0)
+       oxyStress=tmp/100.0
+       
+       RETURN
+       END
+       
+       Real Function TempStress(t)
+       
+      
+CDT    beta function, See Yin et al. (1995), Ag For Meteorol., Yan and Hunt (1999) AnnBot, SK
+       implicit none
+	 real t, R_max, t_opt, t_ceil,f, g, alpha
+       real t_base, beta
+       
+       t_base=5.0
+       beta=1.0
+       t_opt=29.1
+       t_ceil=40.0
+       R_max=1.0
+       
+       if((t.le.t_base).or.(t.ge.t_ceil)) then
+         TempStress=0.0
+         return
+       endif
+c   not sure this is necesssary, kind of a safety thing       
+       if ((t_ceil.le.t_opt).or.(t_opt.le.t_base)) then
+        TempStress=0.0
+        return
+       endif
+
+	f = (t - t_base) / (t_opt - t_base)
+	g = (t_ceil - t) / (t_ceil - t_opt)
+	alpha = beta*(t_opt - t_base) / (t_ceil - t_opt)
+      TempStress= R_max*(f**alpha)*(g**beta)
+      TempStress=max(0.0,TempStress)
+      TempStress=min(1.0,TempStress)
+      return
+      End
