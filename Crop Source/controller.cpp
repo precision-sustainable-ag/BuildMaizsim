@@ -383,7 +383,9 @@ int CController::run(const TWeather & wthr) //todo pass gas exchange parameters 
 		MaxRootDepth=        wthr.MaxRootDepth;
 		AvailableWater=      wthr.ThetaAvail;
 		outputToCropFile();
+#ifndef _INTERFACE
 		outputToLeafFile();
+#endif
 		outputToSummary();
 #ifndef _DEBUG_FILE
 				if (plant->get_develop()->Germinated()) outputToDebug();

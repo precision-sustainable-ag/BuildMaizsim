@@ -1929,7 +1929,7 @@ c     &        /(log(LayerHeight(k)/(0.079D0*LayerHeight(k)))**2.0D0)
             VaporCond_Mul_C=(VaporCond_Mul_C_Fr+VaporCond_Mul_C_Fo)
           endif
          endif
-         g_Vapor(2*k-1,n)=VaporCond_Mul_D*
+         g_Vapor(2*k-1,n)=VaporCond_Mul_D
      &    *(VaporAct_Ambient-VaporAct_mulch_D(k-1,n))
          AirVaporP_temp=AirVaporP_Wea*1000.0D0
          if(AirVaporP_temp.le.VaporAct_mulch_P(k-1,n)) then  ! upwards flow
@@ -3106,7 +3106,7 @@ c     &        /(log(LayerHeight(k)/(0.079D0*LayerHeight(k)))**2.0D0)
 c     &        *(f_mulch_pore**1.667D0)        ! cccz: something compared with the diffusivity, adjust the accessible for path, very arbitrary, like a guess ??????????????????
           endif
          endif
-         g_Vapor(2*k-1,n)=VaporCond_Mul_D*
+         g_Vapor(2*k-1,n)=VaporCond_Mul_D
      &    *(VaporAct_Ambient-VaporAct_mulch_D(k-1,n))
          AirVaporP_temp=AirVaporP_Wea*1000.0D0
          if(AirVaporP_temp.le.VaporAct_mulch_P(k-1,n)) then  ! upwards flow
@@ -3332,7 +3332,7 @@ c     &        /(log(LayerHeight(k)/(0.079D0*LayerHeight(k)))**2.0D0)
             VaporCond_Mul_C=(VaporCond_Mul_C_Fr+VaporCond_Mul_C_Fo)
           endif
          endif
-         g_Vapor(2*k-1,n)=VaporCond_Mul_D*
+         g_Vapor(2*k-1,n)=VaporCond_Mul_D
      &    *(VaporAct_Ambient-VaporAct_mulch_D(k-1,n))
          AirVaporP_temp=AirVaporP_Wea*1000.0D0
          if(AirVaporP_temp.le.VaporAct_mulch_P(k-1,n)) then  ! upwards flow

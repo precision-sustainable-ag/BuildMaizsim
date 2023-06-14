@@ -58,6 +58,9 @@ cccz surface water
       Call Surface_Water_Balance_Adjustment()
       Call SoilNitrogen()
       Call WaterMover()
+      if (time>40806.300) then
+        iii=1
+        endif
       Call SoluteMover()
       Call HeatMover()
       Call GasMover()

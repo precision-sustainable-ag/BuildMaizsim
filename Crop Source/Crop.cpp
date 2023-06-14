@@ -310,7 +310,8 @@ void crop(struct
 			{
 				if (!SHOOTR->isEmerged) SHOOTR->isEmerged=1;
 				//ActualCarboIncrement is calculated from "assimilate", which in turn is calculated from photosynthsis_net in
-				//plant; the unit of assimilate then is in g/plant/hour, thus, at this point, pcrl has unit g/plant/hour
+				//plant; c_pool is 'assimilate' that has been converted from mass CO2 to mass CH2O
+				//  the unit of c_pool then is in g Carbo/plant/hour, thus, at this point, pcrl has unit g/plant/hour
 				// Multiply by 24 to get g plant-1 day-1; multiply by popslab to get g Carbo slab-1 day-1
 				// dt 03/14/2011- I added a pool of carbo to hold leftover carbon from root growth, here it is implemented - see also plant
                 double pool=pSC->getPlant()->get_C_pool_root(); //This holds any carbon not used for root growth in the previous time step
