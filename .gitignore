@@ -2,6 +2,7 @@
 *.g*
 *.G*
 *.$*
-
+2DMAIZSIM.exe
+Maizsim.dll
 /fort.4
 /2DSOIL03.LOG
