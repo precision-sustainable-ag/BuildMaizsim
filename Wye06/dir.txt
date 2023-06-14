@@ -1,0 +1,41 @@
+ Volume in drive D is WIn7D
+ Volume Serial Number is 5A2D-F354
+
+ Directory of D:\MAIZSIM07\MDEasternShore\Wye06
+
+03/16/2023  01:59 PM    <DIR>          .
+03/16/2023  01:59 PM    <DIR>          ..
+03/16/2023  01:58 PM               362 BiologyDefault.bio
+03/16/2023  01:59 PM                 0 createError.log
+03/16/2023  01:59 PM                 0 dir.txt
+03/16/2023  01:58 PM               341 GasID.gas.gas
+03/16/2023  01:58 PM               195 grid1.bat
+03/16/2023  01:58 PM                20 grid2.bat
+02/04/2023  05:51 PM             2,339 MassBl.out
+02/04/2023  05:51 PM             3,992 MassBlMulch.out
+02/04/2023  05:51 PM             8,192 MassBlRunOff.out
+03/16/2023  01:58 PM             1,498 MulchGeo1.mul
+03/16/2023  01:58 PM               553 NitrogenDefault.sol
+03/16/2023  01:58 PM             2,584 PI34M91.var
+02/04/2023  05:50 PM                64 plantstress.crp
+03/16/2023  01:58 PM             1,302 runWYE06.dat
+03/16/2023  01:58 PM             1,024 Wye.nit
+03/16/2023  01:58 PM               161 WYE06.drp
+02/04/2023  05:50 PM               485 WYE06.g01
+02/04/2023  05:50 PM               144 WYE06.g02
+02/04/2023  05:51 PM         4,616,692 WYE06.G03
+02/04/2023  05:50 PM               145 WYE06.G04
+02/04/2023  05:51 PM            28,987 WYE06.G05
+02/04/2023  05:51 PM            22,775 WYE06.G06
+02/04/2023  05:51 PM         3,723,195 WYE06.G07
+03/16/2023  01:59 PM            15,693 WYE06.grd
+03/16/2023  01:58 PM               543 WYE06.ini
+03/16/2023  01:58 PM             2,540 WYE06.lyr
+03/16/2023  01:58 PM             1,204 WYE06.man
+03/16/2023  01:59 PM            30,971 WYE06.nod
+03/16/2023  01:58 PM               466 WYE06.tim
+03/16/2023  01:58 PM           340,901 WYE06.wea
+03/16/2023  01:58 PM               625 WyeClimate.dat
+03/16/2023  01:59 PM               666 WyeSoil.soi
+              32 File(s)      8,808,659 bytes
+               2 Dir(s)  112,040,497,152 bytes free
