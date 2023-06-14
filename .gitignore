@@ -8,3 +8,5 @@ Maizsim.dll
 /2DSOIL03.LOG
 *.vcxproj
 2dMAIZSIM.exe
+Crop Source/Crop.vcxproj
+maizsim

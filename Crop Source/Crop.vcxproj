@@ -110,8 +110,7 @@
       <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)Soil Source\Debug\$(TargetFileName)"
 echo f | xcopy /y "$(OutDirFullPath)$(TargetName).Lib" "$(SolutionDir)Soil Source\Debug\$(TargetName).lib"
 echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)Kansas"
-echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)MDEasternShore"
-</Command>
+echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)MDEasternShore"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dennis_Dbg|Win32'">
@@ -168,10 +167,12 @@ echo f | xcopy /y "$(TargetPath)" "D:\Maizsim07\Crown"</Command>
       <ProgramDatabaseFile>$(SolutionDir)soil source\$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)Soil Source\Release\$(TargetFileName)"
+      <Command>
+echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)Soil Source\Release\$(TargetFileName)"
 echo f | xcopy /y "$(OutDirFullPath)$(TargetName).Lib" "$(SolutionDir)Soil Source\Release\$(TargetName).lib"
-echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)PSA"
-echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)MDEasternshore"</Command>
+echo f | xcopy /y "$(TargetPath)" "X:\Modeling\MAIZSIMInterface\Interface programs and files\Crop Models\MAIZSIM Files"
+echo f | xcopy /y "$(TargetPath)" "C:\Users\dennis.timlin\Documents\Classim_v3"
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
