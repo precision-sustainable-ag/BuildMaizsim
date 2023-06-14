@@ -1,0 +1,46 @@
+ Volume in drive D is WIn7D
+ Volume Serial Number is 5A2D-F354
+
+ Directory of D:\MAIZSIM07\AgMipET2\run_02
+
+02/22/2023  10:19 AM    <DIR>          .
+02/22/2023  10:19 AM    <DIR>          ..
+02/22/2023  10:18 AM             1,989 AgMip.nit
+02/22/2023  10:18 AM           686,838 Agmip2.wea
+02/22/2023  10:18 AM               592 Agmip2Climate.dat
+02/22/2023  10:18 AM               362 BiologyDefault.bio
+02/22/2023  10:19 AM                 0 createError.log
+02/22/2023  10:19 AM                 0 dir.txt
+02/22/2023  10:18 AM               341 GasID.gas
+02/22/2023  10:18 AM               198 grid1.bat
+02/22/2023  10:18 AM                20 grid2.bat
+11/20/2022  02:05 PM            75,815 MassBl.out
+11/20/2022  02:04 PM               120 MassBlMulch.out
+11/20/2022  02:05 PM            17,872 MassBlRunOff.out
+02/22/2023  10:19 AM               603 MeadIr_run_02.dat
+11/30/2022  01:35 PM             1,376 MeadIr_run_02.soi
+02/22/2023  10:18 AM             1,550 MulchGeo1.mul
+02/22/2023  10:18 AM               798 NitrogenDefault.sol
+02/22/2023  10:18 AM             2,583 Pn_33G66.var
+11/30/2022  01:35 PM               207 Rosetta.log
+02/22/2023  10:18 AM             1,182 Runrun_02.dat
+07/20/2022  01:38 PM             1,097 Runrun_02.dat.$$$
+12/02/2020  03:48 PM           291,298 run_02.dbg
+02/22/2023  10:18 AM               161 run_02.drp
+11/20/2022  02:05 PM         1,253,284 run_02.g01
+07/20/2022  09:33 PM               144 run_02.g02
+11/20/2022  02:05 PM        17,996,741 run_02.G03
+11/20/2022  02:05 PM        14,152,742 run_02.G04
+11/20/2022  02:05 PM            57,172 run_02.G05
+11/20/2022  02:05 PM            55,385 run_02.G06
+02/22/2023  10:19 AM            30,395 run_02.grd
+02/22/2023  10:18 AM               545 run_02.ini
+02/22/2023  10:18 AM             4,581 run_02.lyr
+02/22/2023  10:18 AM             1,087 run_02.man
+02/22/2023  10:19 AM            63,251 run_02.nod
+11/20/2022  02:05 PM           202,157 run_02.sum
+02/22/2023  10:18 AM               466 run_02.tim
+01/16/2015  11:33 AM               248 Water.DAT
+02/01/2007  02:08 PM               153 WaterBound.DAT
+              37 File(s)     34,903,353 bytes
+               2 Dir(s)  113,448,960,000 bytes free

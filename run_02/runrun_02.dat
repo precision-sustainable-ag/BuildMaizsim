@@ -9,8 +9,8 @@
 ./run_02/MulchGeo1.mul
 ./run_02/run_02.man
 ./run_02/run_02.drp
-./run_02/Water.DAT
-./run_02/WaterBound.DAT
+./Water.DAT
+./WaterBound.DAT
 ./run_02/run_02.ini
 ./run_02/Pn_33G66.var
 ./run_02/run_02.grd
@@ -26,4 +26,3 @@
 ./run_02/MassBl.out
 ./run_02/MassBlRunOff.out
 ./run_02/MassBlMulch.out
-
