@@ -2,7 +2,8 @@ CXX=g++
 FC=gfortran
 
 CXXFLAGS=
-FFLAGS=-std=legacy -fno-align-commons -fno-underscoring -finit-local-zero
+FFLAGS=-std=legacy -fno-align-commons -fno-underscoring -finit-local-zero -O -fforce-addr  \
+             -fstrength-reduce -funroll-loops -fexpensive-optimizations
 LDFLAGS=
 LDLIBS=-lstdc++
 OBJDIR=obj
@@ -16,7 +17,7 @@ crop:
 	$(CXX) -c $(CXXFLAGS) $(CROPS)/*.cpp
 
 soil:
-	$(FC) -c $(FFLAGS) $(SOILS)/*.for $(SOILS)/*.FOR
+	$(FC)  -c $(FFLAGS)  $(SOILS)/*.for $(SOILS)/*.FOR 
 
 maizsim: crop soil
 	$(FC) $(LDFLAGS) *.o -o maizsim $(LDLIBS)
