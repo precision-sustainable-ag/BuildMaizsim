@@ -2,12 +2,13 @@
 *.g*
 *.G*
 *.$*
+*.out
+*.o
 2DMAIZSIM.exe
 Maizsim.dll
 /fort.4
 /2DSOIL03.LOG
 *.vcxproj
-2dMAIZSIM.exe
 Crop Source/Crop.vcxproj
 maizsim
 *.$$$
