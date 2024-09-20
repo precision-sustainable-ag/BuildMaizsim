@@ -3,6 +3,7 @@
 *.G*
 *.$*
 **/*.out
+**/*.log
 *.o
 2DMAIZSIM.exe
 Maizsim.dll

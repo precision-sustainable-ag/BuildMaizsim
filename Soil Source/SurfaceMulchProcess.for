@@ -391,16 +391,18 @@ cccz add gas code here to reset the flux, before future adjustment via mulch and
          Varbg(i,jjj,3)=Varbg_Air(i,jjj,3)
        enddo
 
-	  enddo
-        g_vapor(:,:)=0.0
+        enddo
+        
+
+       g_vapor(:,:)=0.0
        if (residueApplied.le.0) then
          return
        endif
 cccz initialization step 1: at the very beginning, read files, create time variables
        If (lInput.eq.1) then
            
-          ThreHnew_HardFix=-40000.0D0
-          ThreHnew_UnderWater=-40000.0D0
+          ThreHnew_HardFix=-20000.0D0
+          ThreHnew_UnderWater=-20000.0D0
           BoolMulch_TotalDecomposed=0
 
 cccz pre-initialize some variables (or constant)
@@ -445,6 +447,7 @@ cccz hold the current time
 cccz ponded water initialization (very arbitrary)
        h_Pond_max=0.0D0
        h_Pond_max_thre=0.05D0
+       
                   
 cccz first read the mulching information from file
        im=90
@@ -550,7 +553,7 @@ cccz  transfer weather data from the weather model to mulch model
        AirVaporP_Wea=AirVaporS_Wea-AirVPD_Wea              !cccz actual vapor deficity, "saturated one - deficit"
        CloudCoverFactor_Wea=CLOUD                          !cccz 0-1 cloud cover factor
        AirWind_Wea=WIND                                    !cccz air wind speed, km/hour, will change to m/s later in the computation
-       RelaHumi_Wea=AirVaporP_Wea/AirVaporS_Wea            !cccz 0-1 relative humidity
+       RelaHumi_Wea=max(0.60,AirVaporP_Wea/AirVaporS_Wea)             !cccz 0-1 relative humidity
 
        VaporSat_ambient=exp(19.84D0-4975.9D0/(AirTemp_Wea+273.15D0))  !cccz Saturated Vapor density of ambient air (g/m^3)  Kimball et al., 1976
        VaporAct_ambient=VaporSat_ambient*RelaHumi_Wea                 !cccz Actual Vapor density of ambient air (g/m^3)
@@ -764,9 +767,9 @@ cccz Run the water-retention curve or thermo functions once so all the common pa
 
 
 cccz Note here for dry mulch (the wrr paper) the initial mulch moisture is dependent on air moisture
-c      hMulchInit=4708.34749D0*(AirTemp_Wea+273.15D0)*log(RelaHumi_Wea) ! 4708.34749 \approx 8.314D0/0.018D0/9.81D0*100.0D0 (cm, negative value), 100.0D0 change unit froom "m" to "cm"
+      hMulchInit=4708.34749D0*(AirTemp_Wea+273.15D0)*log(RelaHumi_Wea) ! 4708.34749 \approx 8.314D0/0.018D0/9.81D0*100.0D0 (cm, negative value), 100.0D0 change unit froom "m" to "cm"
 cccz trial initialization (If we start with fresh mulch)   
-      hMulchInit=-40000.0D0
+      hMulchInit=-20000.0D0
 cccz
       
       thMulchIni=WQ_CERES_MULCH(hMulchInit,rho_mulch_b,0.1D0,lInput)            ! the CERES model is based on bulk mulch instead of solid, so there is no need for a more conversion based on "f_mulch_pore"
@@ -953,7 +956,7 @@ cccz  ------------------------------weather data------------------------------
       AirVaporP_Wea=AirVaporS_Wea-AirVPD_Wea              !cccz actual vapor deficity, "saturated one - deficit"
       CloudCoverFactor_Wea=CLOUD                          !cccz 0-1 cloud cover factor
       AirWind_Wea=WIND                                    !cccz air wind speed, km/hour, will change to m/s later in the computation
-      RelaHumi_Wea=AirVaporP_Wea/AirVaporS_Wea            !cccz 0-1 relative humidity
+      RelaHumi_Wea=max(0.60,AirVaporP_Wea/AirVaporS_Wea)            !cccz 0-1 relative humidity
 
 cccz conver the weather data (change a unit or define another quantity)
       VaporSat_ambient=exp(19.84D0-4975.9D0/(AirTemp_Wea+273.15D0))   ! Saturated Vapor density of ambient air (g/m^3)                           
@@ -1635,7 +1638,7 @@ cccz upwards radiation (W/m^2*1cm or 1m)
 c        qLeft=SurfNodeNodeIndexH(i)
 c        qRight=SurfNodeNodeIndexH(i+1)
         longEmissionSoil=epsilon_s*sigma*
-     &   ((Tmpr_Sur(n)+273.15D0)**4.0D0)
+     &   ((Tmpr_Sur(i)+273.15D0)**4.0D0)
         longRadUp(1,i)=longEmissionSoil
         do kk=2,mulchLayer+1
          longRadUp(kk,i)=longEmissionSoil*(1.0D0-DeltaRlong)
@@ -1662,7 +1665,7 @@ c        qRight=SurfNodeNodeIndexH(i+1)
 c        qLeft=SurfNodeNodeIndexH(i)
 c        qRight=SurfNodeNodeIndexH(i+1)
         longEmissionSoil=epsilon_s*sigma*                             !cccz also use 'epsilon_s=1.0D0' for water cause water is considered as a blackbody
-     &   ((Tmpr_Sur(n)+273.15D0)**4.0D0)    !c??? assume that the surface ponded water has the same temp as surface soil,
+     &   ((Tmpr_Sur(i)+273.15D0)**4.0D0)    !c??? assume that the surface ponded water has the same temp as surface soil,
         longRadUp(SubmergeIndex,i)=longEmissionSoil
         do kk=SubmergeIndex+1,mulchLayer+1
          longRadUp(kk,i)=longEmissionSoil*(1.0D0-DeltaRlong)
@@ -1686,7 +1689,7 @@ c        qRight=SurfNodeNodeIndexH(i+1)
 c        qLeft=SurfNodeNodeIndexH(i)
 c        qRight=SurfNodeNodeIndexH(i+1)
         longEmissionSoil=epsilon_s*sigma*                             !cccz also use 'epsilon_s=1.0D0' for water cause water is considered as a blackbody
-     &    ((Tmpr_Sur(n)+273.15D0)**4.0D0)   !c??? assume that the surface ponded water has the same temp as surface soil,
+     &    ((Tmpr_Sur(i)+273.15D0)**4.0D0)   !c??? assume that the surface ponded water has the same temp as surface soil,
         longRadUp(mulchLayer+1,i)=longEmissionSoil
         do kk=1,mulchLayer
           longRadUp(kk,i)=0.0D0
@@ -1864,9 +1867,9 @@ c     &        **2.0D0)
      &    +VaporCond_Mul_C*
      &    (VaporAct_mulch_P(1,n)-VaporAct_Sur_P(n))
          if(g_Vapor_try1.lt.0.0D0.and.g_vapor_try2.lt.0.0D0) then      !cccz take the min between 'diffusive type' and 'potential' evporation, if the two values are of different directions, we assume zero flux fo numerical stable     
-           g_vapor(1,n)=max(g_Vapor_try1, g_Vapor_try2)
+            g_vapor(1,n)=min(g_Vapor_try1, g_Vapor_try2)
          elseif(g_Vapor_try1.gt.0.0D0.and.g_vapor_try2.gt.0.0D0) then
-           g_vapor(1,n)=min(g_Vapor_try1, g_Vapor_try2)
+            g_vapor(1,n)=max(g_Vapor_try1, g_Vapor_try2)
          else
            g_vapor(1,n)=0.0D0
          endif               
@@ -2388,6 +2391,12 @@ cccz reset/initialize the error measurements
           goto 2310
          endif
         endif
+        
+        if(MulchEleTmpr_temp2(k,n).lt.-20.0D0) then
+            goto 2307
+        endif
+        
+            
         if(MulchElehNew_temp2(k,n).ne.MulchElehNew_temp2(k,n)) then
             goto 2307 
         endif
@@ -2462,6 +2471,11 @@ c        MulchElehNew_temp(k,n)=MulchElehNew_temp2(k,n)
           goto 2310
          endif
         endif
+        
+        if(MulchEleTmpr_temp2(k,n).lt.-20.0D0) then
+            goto 2307
+        endif
+        
         if(MulchElehNew_temp2(k,n).ne.MulchElehNew_temp2(k,n)) then
             goto 2307
         endif
@@ -3036,12 +3050,12 @@ c     &       *(f_mulch_pore**1.667D0)            ! establish a path that simila
      &    (VaporAct_mulch_D(k,n)-VaporAct_Sur(n))
      &    +VaporCond_Mul_C*
      &    (VaporAct_mulch_P(k,n)-VaporAct_Sur_P(n))
-         if(g_Vapor_try1.lt.0.0D0.and.g_vapor_try2.lt.0.0D0) then      !cccz take the min between 'diffusive type' and 'potential' evporation, if the two values are of different directions, we assume zero flux fo numerical stable     
-           g_vapor(2*k-1,n)=max(g_Vapor_try1, g_Vapor_try2)
+         if(g_Vapor_try1.lt.0.0D0.and.g_vapor_try2.lt.0.0D0) then      !cccz take the min between 'diffusive type' and 'potential' evporation, if the two values are of different directions, we assume zero flux fo numerical stable                  
+             g_vapor(2*k-1,n)=min(g_Vapor_try1, g_Vapor_try2)
          elseif(g_Vapor_try1.gt.0.0D0.and.g_vapor_try2.gt.0.0D0) then
-           g_vapor(2*k-1,n)=min(g_Vapor_try1, g_Vapor_try2)
+             g_vapor(2*k-1,n)=max(g_Vapor_try1, g_Vapor_try2) 
          else
-           g_vapor(2*k-1,n)=0.0D0
+              g_vapor(2*k-1,n)=0.0D0
          endif
         enddo      
         g_Vapor(2*k,1)=0.0D0           ! horizontal vapor flux are in even rows, and has impermeable boundaries    
@@ -3265,11 +3279,11 @@ c     &       *(f_mulch_pore**1.667D0)            ! establish a path that simila
      &    +VaporCond_Mul_C*
      &    (VaporAct_mulch_P(k,n)-VaporAct_Sur_P(n))
          if(g_Vapor_try1.lt.0.0D0.and.g_vapor_try2.lt.0.0D0) then    !cccz take the min between 'diffusive type' and 'potential' evporation, if the two values are of different directions, we assume zero flux fo numerical stable
-           g_vapor(2*k-1,n)=max(g_Vapor_try1, g_Vapor_try2)
+              g_vapor(2*k-1,n)=min(g_Vapor_try1, g_Vapor_try2)
          elseif(g_Vapor_try1.gt.0.0D0.and.g_vapor_try2.gt.0.0D0) then
-           g_vapor(2*k-1,n)=min(g_Vapor_try1, g_Vapor_try2)
+              g_vapor(2*k-1,n)=max(g_Vapor_try1, g_Vapor_try2)
          else
-           g_vapor(2*k-1,n)=0.0D0
+             g_vapor(2*k-1,n)=0.0D0
          endif
         enddo      
         g_Vapor(2*k,1)=0.0D0           ! horizontal vapor flux are in even rows, and has impermeable boundaries    
@@ -4135,6 +4149,11 @@ cccz reset/initialize the error measurements
           goto 2410
          endif
         endif
+        
+        if(MulchEleTmpr_temp2(k,n).lt.-20.0D0) then
+            goto 2407
+        endif
+        
         if(MulchElehNew_temp2(k,n).ne.MulchElehNew_temp2(k,n)) then
             goto 2407
         endif
@@ -4227,6 +4246,10 @@ c         MulchElehNew_temp(k,n)=MulchElehNew_temp2(k,n)
           goto 2410
          endif
         endif
+        if(MulchEleTmpr_temp2(k,n).lt.-20.0D0) then
+            goto 2407
+        endif
+        
         if(MulchElehNew_temp2(k,n).ne.MulchElehNew_temp2(k,n)) then
             goto 2407
         endif
@@ -4597,54 +4620,7 @@ c    for each time segment during the iteration, use the same scheme showed foll
        enddo  
       enddo
       
-cccz old code
-c      do n=1,SurNodeIndex-1
-c       if(n.eq.1) then
-c         kSurL=SurfNodeSurfIndexH(n)
-c         Local_VarBW1=RainFallInput_temp(1,n)/10000.0D0
-c         Local_VarBW2=-g_Vapor(kk,n)/10000.0D0
-c         Local_VarBW3=Local_VarBW2-Local_VarBW1
-c         VarBW1_temp(n)=VarBW1_temp(n)+Local_VarBW1*LocalStep
-c         VarBW2_temp(n)=VarBW2_temp(n)+Local_VarBW2*LocalStep
-c         VarBW3_temp(n)=VarBW3_temp(n)+Local_VarBW3*LocalStep
-c         Q_temp(n)=Q_temp(n)+(-Width(kSurL)*Local_VarBW3)*LocalStep
-c       elseif(n.eq.(SurNodeIndex-1)) then
-c         kSurL=SurfNodeSurfIndexH(n)
-c         kSurR=SurfNodeSurfIndexH(n+1)
-c         Local_VarBW1=(RainFallInput_temp(1,n-1)*widthPerMulchUnit(n-1)
-c     &    +RainFallInput_temp(1,n)*widthPerMulchUnit(n))
-c     &    /(widthPerMulchUnit(n-1)+widthPerMulchUnit(n))/10000.0D0
-c         Local_VarBW2=-(g_Vapor(kk,n-1)*widthPerMulchUnit(n-1)
-c     &    +g_Vapor(kk,n)*widthPerMulchUnit(n))
-c     &    /(widthPerMulchUnit(n-1)+widthPerMulchUnit(n))/10000.0D0
-c         Local_VarBW3=Local_VarBW2-Local_VarBW1
-c         VarBW1_temp(n)=VarBW1_temp(n)+Local_VarBW1*LocalStep
-c         VarBW2_temp(n)=VarBW2_temp(n)+Local_VarBW2*LocalStep
-c         VarBW3_temp(n)=VarBW3_temp(n)+Local_VarBW3*LocalStep
-c         Q_temp(n)=Q_temp(n)+(-Width(kSurL)*Local_VarBW3)*LocalStep
-c         Local_VarBW1=RainFallInput_temp(1,n)/10000.0D0
-c         Local_VarBW2=-g_Vapor(kk,n)/10000.0D0
-c         Local_VarBW3=Local_VarBW2-Local_VarBW1
-c         VarBW1_temp(n+1)=VarBW1_temp(n+1)+Local_VarBW1*LocalStep
-c         VarBW2_temp(n+1)=VarBW2_temp(n+1)+Local_VarBW2*LocalStep
-c         VarBW3_temp(n+1)=VarBW3_temp(n+1)+Local_VarBW3*LocalStep
-c         Q_temp(n+1)=Q_temp(n+1)+(-Width(kSurR)*Local_VarBW3)*LocalStep
-c       else
-c         kSurL=SurfNodeSurfIndexH(n)
-c         Local_VarBW1=(RainFallInput_temp(1,n-1)*widthPerMulchUnit(n-1)
-c     &    +RainFallInput_temp(1,n)*widthPerMulchUnit(n))
-c     &    /(widthPerMulchUnit(n-1)+widthPerMulchUnit(n))/10000.0D0
-c         Local_VarBW2=-(g_Vapor(kk,n-1)*widthPerMulchUnit(n-1)
-c     &    +g_Vapor(kk,n)*widthPerMulchUnit(n))
-c     &    /(widthPerMulchUnit(n-1)+widthPerMulchUnit(n))/10000.0D0
-c         Local_VarBW3=Local_VarBW2-VarBW(kSurL,1)
-c         VarBW1_temp(n)=VarBW1_temp(n)+Local_VarBW1*LocalStep
-c         VarBW2_temp(n)=VarBW2_temp(n)+Local_VarBW2*LocalStep
-c         VarBW3_temp(n)=VarBW3_temp(n)+Local_VarBW3*LocalStep
-c         Q_temp(n)=Q_temp(n)+(-Width(kSurL)*Local_VarBW3)*LocalStep
-c       endif 
-c      enddo
-      
+     
     
       if(PerOccupation.eq.2.0D0) then
        kk=SubmergeIndex+1

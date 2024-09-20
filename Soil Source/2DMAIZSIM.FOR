@@ -3,7 +3,7 @@
 *     2DSOIL  - Numerical model of two-dimensional soil environment    *
 *                           for field crops                            *
 *                                                                      *
-*                              Release 3.0.0                              *
+*                              Release 3.1.2.0                              *
 *||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*
 
       Include 'public.ins'
@@ -37,6 +37,9 @@ C SetSurfaceH --  reading hourly weather
       Call SetTDB()
       Call AutoIrrigate()
       Call Management()
+      Call Irrigation()
+      Call PondedIrrigationByHead()
+      Call PondedIrrigationByFlux()
 	Call TillageProcess
 c	Call Drip()
 
@@ -58,9 +61,6 @@ cccz surface water
       Call Surface_Water_Balance_Adjustment()
       Call SoilNitrogen()
       Call WaterMover()
-      if (time>40806.300) then
-        iii=1
-        endif
       Call SoluteMover()
       Call HeatMover()
       Call GasMover()

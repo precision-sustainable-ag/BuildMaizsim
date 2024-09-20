@@ -8,9 +8,10 @@
 ./Del06/WyeSoil.soi
 ./Del06/MulchGeo1.mul
 ./Del06/DEL06.man
+./Del06/DEL06.irr
 ./Del06/DEL06.drp
-./Del06/Water.DAT
-./Del06/WaterBound.DAT
+./Del06/WaterMovDefault.dat
+./WaterBound.DAT
 ./Del06/DEL06.ini
 ./Del06/PI33B53.var
 ./Del06/DEL06.grd

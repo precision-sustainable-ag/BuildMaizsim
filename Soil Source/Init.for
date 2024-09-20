@@ -3,7 +3,8 @@
       Include 'puweath.ins'
       Include 'puplant.ins'
 	Character*10 Sowing, Ending, Date4,Date1  ! date1 is dummy for beginDay until we modify the itnerface
-	Character*255 RootName,T1,T2
+	Character*256 RootName,T1,T2
+      Character*256 extract_path, path,logFile
       Character*80 Indates,test
       integer iapos, Quote_COUNT, begindate
       
@@ -18,6 +19,7 @@ c     for writing frequency to output
       nContentRootM=0.012
       nContentRootY=0.19
       im=1
+      logFile=""
       open(9,file=RunFile,status='old', ERR=10)
 	read(9,5,err=6)WeatherFile
       im=im+1
@@ -38,6 +40,8 @@ c     for writing frequency to output
       read(9,5,err=6)MulchFile
          im=im+1
 	read(9,5,err=6)ManagementFile
+         im=im+1
+      read(9,5,err=6)IrrigationFile
          im=im+1
       read(9,5,err=6)DripFile
          im=im+1
@@ -80,7 +84,9 @@ C45    Continue
       read(9,'(A132)',err=6)MassBalanceMulchFileOut
          im=im+1
 	close(9)
-      Open(4,file='2DSOIL03.LOG')
+      Path=extract_path(PlantGraphics)
+      logFile=trim(Path)//'2DSOIL03.LOG'
+      Open(4,file=logFile)
 c   end of temporary block
 c  These 4 variables are for the iterative solver Orthomin
       ECNVRG=1.0d-6
@@ -89,8 +95,7 @@ c  These 4 variables are for the iterative solver Orthomin
 	MaxItO=200
 	AutoIrrigateF=0
       im=1
-c    Open and read initials file 
-      write(*,*) InitialsFile	
+c    Open and read initials file	
       Open(41, file=InitialsFile, status='old',err=9)
 	  read(41,*,err=8)
         im=im+1
@@ -168,6 +173,7 @@ c dt
 	gSink_OM=0.
 	gSink_rootY=0.
 	gSink_rootM=0.
+      gSink_N2O=0.
       
 
 * 
@@ -180,6 +186,7 @@ c dt
       NvarBT=0
       NvarBG=0
       NShoot=0
+      NumG=3                                    ! For now, only 3 gas is read (co2, o2, N2O)
     
         KXB(:)=0
         Width(:)=0.
@@ -220,6 +227,27 @@ c dt
       return
       end
       
-      
+       function extract_path(filename)
+       character *256 filename, path, extract_path
+       integer :: i, len
+
+       len = len_trim(filename)
+       path = ""
+    ! Find the last occurrence of the directory separator '\'
+       
+       do i = len, 1, -1
+          if ((filename(i:i) == '\').OR.(filename(i:i) == '/')) then
+              path = filename(1:i)
+              if (filename(i:i) == '/') then   ! if windows
+                  path=path // '/'
+               else 
+                 path=path // '\'               ! if linux
+              end if
+             exit
+          end if
+       end do
+
+       extract_path = path
+       end function extract_path
        
         

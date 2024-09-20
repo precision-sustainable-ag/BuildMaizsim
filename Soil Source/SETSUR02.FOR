@@ -59,7 +59,7 @@ C**  WIND-  windspeed at 2 meters (km hr-1).                          **
 C**                                                                   **
 C**  RH-    Relative Humidity, (%, i.e., 90.2)                        **
 C**                                                                   **
-C**  IRAV-  avg Rainfall intensity for the day, (mm/day, hr?)              **
+C**  IRAV-  avg Rainfall intensity for the day, (cm/hr)               **
 C**                                                                   **
 C**  TWET-  wet bulb temperature (oC).                                **
 C**                                                                   **
@@ -112,6 +112,14 @@ cccz initialized surface water income
          Varbw_Mulch(i,2)=0.0D0
          Varbw_Mulch(i,3)=0.0D0 
       enddo
+            
+
+csb: Gas transfer coefficient: surface gas flux change per unit gas content in the soil air at the soil surface (cm/day)
+Csb: This value will be different for different gases
+      GasTransfCoeff(1)=11920.
+      GasTransfCoeff(2)=15400.      
+      GasTransfCoeff(3)=12355.
+      
       
       NumMod=NumMod+1
       ModNum=NumMod
@@ -237,7 +245,12 @@ C
       il=il+1
       Read (5,*,ERR=10)
 1111  il=il+1
-      Read (5,*,ERR=10) iDum, date
+      Read (5,*,ERR=10,iostat=IOSTAT) iDum, date
+      if (iostat<0) then
+         write(*,*) 'Premature end of weather file'
+         stop
+      end if
+      
       MDAY=julday(date)
 cdt changed from LE to LT since jday was always gt. time
       If (MDAY.LT.JDFRST) GO TO 1111
@@ -267,7 +280,11 @@ c
         il=il-1
         BACKSPACE(5)
         il=il+1
-        Read(5,*,ERR=10) JDum,date,(CLIMAT(i),i=1,NCD)
+        Read(5,*,ERR=10, iostat=IOSTAT) JDum,date,(CLIMAT(i),i=1,NCD)
+        if (iostat<0) then
+           write(*,*) 'Premature end of weather file'
+           stop
+        end if
            JDAY=Julday(date)
 c    SInce some routines need the day of the calendar year we need a variable to hold this
 C    since the julian day is referenced to a time longer in the past
@@ -322,10 +339,12 @@ c         Rel_Humid=CLIMAT(5)
            GAIR(2)=209000    !this is the atmospheric O2 concentration in ppm  
 csb O2 content of air=20.95% by volume, ie; 100 parts of air=20.95 parts of O2
 csb 1 part of air=0.2095 parts of O2. in 10^6 parts of air=0.2095*10^6=209000 ppm
+           GAIR(3)=0.332    !this is the atmospheric N2O concentration in ppm  [IPCC 2021,Technical summary]
+csb N2O concentration in atm 332 ppb=0.33 ppm 
           
 
 Cdt
-c......................... Radiation submodel
+c.........Radiation submodel
 C
 C  CALCULATE SOLAR DECLINATION
 C
@@ -451,7 +470,12 @@ C
 C  READ NEXT DAY'S DATA FROM WEATHER FILE ***
 C
         il=il+1
-        Read (5,*,ERR=10) MDAY, date,(CLIMAT(i),i=1,NCD)
+        Read (5,*,ERR=10,iostat=IOSTAT) MDAY, date,(CLIMAT(i),i=1,NCD)
+        if (iostat<0) then
+          write(*,*) 'Premature end of weather file'
+          stop
+        endif
+
 c       Minimum tomorrow temperature
         MDAY=Julday(date)
         If (MDAY.LT.JDLAST) then
@@ -760,16 +784,20 @@ C
 C
 c..................Daily calculations for the precipitation
 C
+! dtRain is time in days to it takes for this amount to rain using the average hourly rainfall rate (IR)
+! check to see if this amount will be reached in the current hour
+! if it is too much for the hour, then the excess is carried over to the next hour
+! note that RINT has to be a 24 hour rainfall rate - cm/day. it is input as cm over the hour.
 
         If(Rain.ge.0.) then
-          DtRain=RAIN/IR
+          DtRain=RAIN/IR 
           Do i=24,1,-1
-            If(DtRain.ge.PERIOD) then
-              RINT(i)=IR
-              dtRain=dtRain-PERIOD
+            If(DtRain.ge.PERIOD*24.0) then
+              RINT(i)=IR*24.0
+              dtRain=dtRain-PERIOD*24.0
             Else
 cdt changed this from dtrain/ir 11/14/96
-              RINT(i)=DtRain*IR/period
+              RINT(i)=DtRain*IR*24.0
               goto 55
             Endif
           Enddo
@@ -1103,14 +1131,14 @@ c................... Gas movement
         do jjj=1,NumG
           VarBG(i,jjj,2)=GasTransfCoeff(jjj)                !GasTransfCoeff(jjj) : is the conductance of surface air layer to gas flow or rate constant of the gas exchange between the soil and the atmosphere [cm/day]
           VarBG(i,jjj,3)=GasTransfCoeff(jjj) 
-     !       *GAIR(jjj)/ppm_to_ugGasCm3air(jjj)             ! convert the initial concentration of CO2 in [ppm]  to [ug co2/cm3 air] !GAIR: is the atmospheric CO2 concentration [ppm], see conversion details in grid_bnd
-          VarBG(i,jjj,1)= GAIR(jjj)/ppm_to_ugGasCm3air(jjj) ! convert the initial concentration of CO2 in [ppm]  to [ug co2/cm3 air] !This is if BC=4, is gas content instead of flux, 
+     !       *GAIR(jjj)/ugGasCm3air_to_ppm(jjj)             ! convert the initial concentration of CO2 in [ppm]  to [ug co2/cm3 air] !GAIR: is the atmospheric CO2 concentration [ppm], see conversion details in grid_bnd
+          VarBG(i,jjj,1)= GAIR(jjj)/ugGasCm3air_to_ppm(jjj) ! convert the initial concentration of CO2 in [ppm]  to [ug co2/cm3 air] !This is if BC=4, is gas content instead of flux, 
         Enddo
       Endif
       if (K.eq.1.or.K.eq.3.or.k.eq.6) then
           do jjj=1,NumG
               VarBG(i,jjj,2)=GasTransfCoeff(jjj)  
-              VarBG(i,jjj,1)= GAIR(jjj)/ppm_to_ugGasCm3air(jjj)          ! convert the atm CO2 in [ppm]  to [ug co2/cm3 air]       
+              VarBG(i,jjj,1)= GAIR(jjj)/ugGasCm3air_to_ppm(jjj)          ! convert the atm CO2 in [ppm]  to [ug co2/cm3 air]       
           end do
       end if
       Enddo

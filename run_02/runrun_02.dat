@@ -8,8 +8,9 @@
 ./run_02/MeadIr_run_02.soi
 ./run_02/MulchGeo1.mul
 ./run_02/run_02.man
+./run_02/run_02.irr
 ./run_02/run_02.drp
-./Water.DAT
+./run_02/WaterMovDefault.dat
 ./WaterBound.DAT
 ./run_02/run_02.ini
 ./run_02/Pn_33G66.var

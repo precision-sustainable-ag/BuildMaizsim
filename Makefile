@@ -3,7 +3,7 @@ FC=gfortran
 
 CXXFLAGS=
 FFLAGS=-std=legacy -fno-align-commons -fno-underscoring -finit-local-zero -O -fforce-addr  \
-             -fstrength-reduce -funroll-loops -fexpensive-optimizations
+             -fstrength-reduce -funroll-loops -fexpensive-optimizations 
 LDFLAGS=
 LDLIBS=-lstdc++
 OBJDIR=obj

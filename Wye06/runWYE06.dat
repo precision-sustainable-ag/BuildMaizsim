@@ -8,9 +8,10 @@
 ./Wye06/WyeSoil.soi
 ./Wye06/MulchGeo1.mul
 ./Wye06/WYE06.man
+./Wye06/WYE06.irr
 ./Wye06/WYE06.drp
-./Wye06/Water.DAT
-./Wye06/WaterBound.DAT
+./Wye06/WaterMovDefault.dat
+./WaterBound.DAT
 ./Wye06/WYE06.ini
 ./Wye06/PI34M91.var
 ./Wye06/WYE06.grd

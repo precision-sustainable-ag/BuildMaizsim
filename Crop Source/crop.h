@@ -121,9 +121,10 @@
 			float hNew[NumNPD], ThNew[NumNPD], Vx[NumNPD], Vz[NumNPD], 
                   Q[NumNPD], Conc[NumSD][NumNPD], g[NumGD][NumNPD], 
                   Tmpr[NumNPD],Con[NumNPD],TcsXX[NumNPD],RO[NumNPD],
-                  hNew_org[NumNPD], QAct[NumNPD],ThetaAvail, ThetaFull;
+                  hNew_org[NumNPD], QAct[NumNPD],ThetaAvailRZ, ThetaFullRZ;
 			float ThAvail[NumNPD],ThFull[NMatD];
 			bool  lOrt;
+			float QGas[NumGD][NumNPD], ThetaAir[NumNPD];
  };
 
 //elements
@@ -135,6 +136,9 @@
 			     RMassM[NumNPD],RDenM[NumNPD],
 			     RMassY[NumNPD], RDenY[NumNPD] ;
 		    int    MatNumE[NumElD];
+			float gSink_OM[NumGD][NumNPD],
+				gSink_root[NumGD][NumNPD], gSink_rootY[NumGD][NumNPD],
+				gSink_rootM[NumGD][NumNPD], gSink_N2O[NumGD][NumNPD];
  };
 
  //boundary
@@ -147,7 +151,8 @@
 			     CodeG[NumNPD],PCodeW[NumNPD];
 		   float Width[NumBPD], VarBW[3][NumBPD],
 			     VarBS[NumSD][NumBPD],
-				 VarBT[4][NumBPD], VarBG[3][NumGD][NumBPD],EO,Tpot;
+				 VarBT[4][NumBPD], VarBG[3][NumGD][NumBPD],EO,Tpot, gridWidth;
+		   int PondingbyHead, PondingbyFlux;
  };
 // Time
 
@@ -176,7 +181,7 @@
 	           char WeatherFile[256], TimeFile[256], BiologyFile[256],
                ClimateFile[256], NitrogenFile[256], SoluteFile[256],
                ParamGasFile[256],SoilFile[256], 
-               ManagementFile[256], DripFile[256],
+               ManagementFile[256],IrrigationFile[256],DripFile[256],
                WaterFile[256], WaterBoundaryFile[256], 
                GraphicsFile[256], InitialsFile[256],VarietyFile[256],
 			   NodeGraphics[256],ElemGraphics[256],NodeGeomFile[256],

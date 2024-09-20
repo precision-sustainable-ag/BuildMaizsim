@@ -1,54 +1,51 @@
- Volume in drive D is WIn7D
- Volume Serial Number is 5A2D-F354
+ Volume in drive D is Win7D
+ Volume Serial Number is 8862-B5C5
 
  Directory of D:\MAIZSIM07\AgMipET2\run_01
 
-05/23/2023  09:37 AM    <DIR>          .
-05/23/2023  09:37 AM    <DIR>          ..
-02/22/2023  11:18 AM             1,989 AgMip.nit
-02/22/2023  11:18 AM           686,838 Agmip2.wea
-02/22/2023  11:18 AM               592 Agmip2Climate.dat
-02/22/2023  11:18 AM               362 BiologyDefault.bio
-05/23/2023  09:37 AM                 0 createError.log
-05/23/2023  09:37 AM                 0 dir.txt
+09/19/2024  04:41 PM    <DIR>          .
+09/18/2024  02:51 PM    <DIR>          ..
+10/16/2023  12:18 PM                 0 2DSOIL03.LOG
+09/19/2024  03:49 PM             1,989 AgMip.nit
+09/19/2024  03:49 PM           686,838 Agmip2.wea
+09/19/2024  03:49 PM               592 Agmip2Climate.dat
+09/19/2024  03:49 PM               362 BiologyDefault.bio
+09/19/2024  04:41 PM                 0 createError.log
+09/19/2024  04:41 PM                 0 dir.txt
 06/03/2022  10:39 AM               327 GasCO2Default.gas
-02/22/2023  11:18 AM               341 GasID.gas
-02/22/2023  11:18 AM               198 grid1.bat
-02/22/2023  11:18 AM                20 grid2.bat
-02/23/2023  12:01 AM            34,232 MassBl.out
-02/22/2023  11:59 PM               120 MassBlMulch.out
+09/19/2024  03:49 PM               351 GasID.gas
+09/19/2024  03:49 PM               198 grid1.bat
+09/19/2024  03:49 PM                20 grid2.bat
+11/20/2023  04:45 PM               144 MassBl.dat
+01/29/2024  04:28 PM            79,220 MassBl.out
+01/29/2024  04:27 PM               120 MassBlMulch.out
 07/17/2020  02:50 PM           172,642 MassBlRO.out
-02/23/2023  12:01 AM             7,752 MassBlRunOff.out
+01/29/2024  04:28 PM            17,872 MassBlRunOff.out
 11/17/2022  11:12 AM            17,432 MassBlRunOffD.out
-05/23/2023  09:37 AM               603 MeadIr_run_01.dat
-02/22/2023  11:18 AM             1,376 MeadIr_run_01.soi
-04/10/2023  01:11 PM             1,499 MulchGeo1.mul
-02/22/2023  11:18 AM               798 NitrogenDefault.sol
-02/23/2023  12:01 AM             1,546 plantstress.crp
-02/22/2023  11:18 AM             2,585 Pn_33B51.var
-02/22/2023  11:18 AM               207 Rosetta.log
-02/22/2023  11:18 AM             1,182 runrun_01.dat
-11/30/2022  02:34 PM             1,141 runrun_01.dat.$$$
+09/19/2024  04:41 PM               603 MeadIr_run_01.dat
+09/19/2024  04:41 PM                 0 MeadIr_run_01.soi
+09/19/2024  03:49 PM             1,498 MulchGeo1.mul
+09/19/2024  03:49 PM               798 NitrogenDefault.sol
+01/29/2024  04:28 PM             6,790 plantstress.crp
+09/19/2024  03:49 PM             2,585 Pn_33B51.var
+09/19/2024  04:41 PM                 0 Rosetta.log
+09/19/2024  03:51 PM               660 runrun_01.dat
+09/19/2024  04:00 PM               660 runrun_01b.dat
 05/19/2022  06:08 PM               603 run_01.dat
 01/28/2021  10:25 AM            11,938 run_01.dbg
-02/22/2023  11:18 AM               161 run_01.drp
-02/23/2023  12:09 AM           330,021 run_01.g01
-02/23/2023  12:09 AM           602,772 run_01.g02
-02/23/2023  12:01 AM         8,855,645 run_01.G03
-02/23/2023  12:01 AM         2,535,895 run_01.G04
-02/23/2023  12:01 AM            28,592 run_01.G05
-02/23/2023  12:01 AM            21,543 run_01.G06
-02/23/2023  12:01 AM         7,141,695 run_01.G07
-05/23/2023  09:37 AM            30,395 run_01.grd
-02/22/2023  11:18 AM               545 run_01.ini
-02/22/2023  11:18 AM             4,581 run_01.lyr
-02/22/2023  11:18 AM             1,087 run_01.man
-05/23/2023  09:37 AM            63,251 run_01.nod
+09/19/2024  03:49 PM               161 run_01.drp
+09/19/2024  04:41 PM            30,395 run_01.grd
+09/19/2024  03:49 PM               545 run_01.ini
+09/19/2024  03:49 PM               393 run_01.irr
+09/19/2024  03:49 PM             4,791 run_01.lyr
+09/19/2024  03:49 PM             1,087 run_01.man
+09/19/2024  04:41 PM            66,705 run_01.nod
 11/30/2022  03:39 PM           177,717 run_01.sum
-02/22/2023  11:18 AM               466 run_01.tim
+09/19/2024  03:49 PM               466 run_01.tim
 11/17/2022  11:12 AM            55,760 run_01D.G05
 11/17/2022  11:12 AM            54,017 run_01D.G06
 01/16/2015  12:33 PM               248 Water.DAT
 02/01/2007  03:08 PM               153 WaterBound.DAT
-              45 File(s)     20,850,867 bytes
-               2 Dir(s)  117,057,892,352 bytes free
+09/19/2024  03:49 PM               290 WaterMovDefault.dat
+              42 File(s)      1,396,970 bytes
+               2 Dir(s)  971,245,993,984 bytes free

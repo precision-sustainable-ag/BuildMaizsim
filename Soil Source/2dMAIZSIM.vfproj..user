@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<VisualStudioUserFile ProjectCreator="Intel Fortran" Keyword="Console Application - Converted from CVF" Version="11.0" ProjectIdGuid="{05500875-9B63-45CA-B7D6-FD6A5240ED1A}" SccProjectName="SAK" SccLocalPath="SAK" SccAuxPath="SAK" SccProvider="SAK">
-	<Configurations>
-		<Configuration Name="Debug|Win32" CommandArguments=".\Del06\runDel06.dat" WorkingDirectory="d:\maizsim07\MDEasternShore"/>
-		<Configuration Name="Release|Win32" CommandArguments=".\run\3\runBeltsv_har.dat" WorkingDirectory="c:\users\dennis.timlin\documents\classim_v3"/></Configurations></VisualStudioUserFile>

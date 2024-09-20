@@ -85,12 +85,11 @@ c inputs hourly data
       
       Parameter (PERIOD =1./24.)
       integer jday,m,DayOfYear,CurYear,Modnum, ThisYear,
-     &         isol
+     &         isol, HOUR, iperd
       double precision St,t, GAMMA_psy
       real Interval, HRAIN,HSR,HTEMP, HTEMPY,HWIND,Rel_Humid,
      &     BEERS 
       character*10 date
-      integer HOUR, iperd
       Common /weather/ il,im,HRAIN(24),HSR(24),HTEMP(24),HTEMPY(24), 
      &     HWIND(24), Rel_Humid(24),isol,Date1,ModNum,
      &     Interval, TWET(24),TDRY(24), AVP(24), GAMMA_psy(24),
@@ -126,6 +125,14 @@ cccz initialized surface water income
          Varbw_Mulch(i,2)=0.0D0
          Varbw_Mulch(i,3)=0.0D0 
       enddo
+            
+
+csb: Gas transfer coefficient: surface gas flux change per unit gas content in the soil air at the soil surface (cm/day)
+Csb: This value will be different for different gases
+      GasTransfCoeff(1)=11920.
+      GasTransfCoeff(2)=15400.      
+      GasTransfCoeff(3)=12355.
+      
 C
 C  First and last days
 C
@@ -263,7 +270,7 @@ C
 C
 C FIND CORRECT DAY IN WEATHER FILE
 C
-      Open (5,file=WeatherFile,status='old',ERR=10)
+      Open (5,file=WeatherFile,status='old',ERR=9)
       im=im+1
       il=il+1
       Read (5,*,ERR=10)
@@ -271,7 +278,12 @@ C
       il=il+1
       Read (5,*,ERR=10)
 1111  il=il+1
-      Read (5,*,ERR=10) iDum, date, iDum
+      Read (5,*,ERR=10,iostat=IOSTAT) iDum, date, idum
+      if (iostat<0) then
+        write(*,*) 'Premature end of weather file'
+        stop
+      end if
+
       MDAY=julday(date)
 cdt changed from LE to LT since jday was always gt. time
       If (MDAY.LT.JDFRST) GO TO 1111
@@ -309,7 +321,12 @@ c
         Do m=1,24
           il=il+1
 C          Read(5,*,ERR=10) JDAY,HOUR, DATE1, (CLIMAT(i),i=1,NCD)
-          Read(5,*,ERR=10) JDAY, date, HOUR,  (CLIMAT(i),i=1,NCD)
+          Read(5,*,ERR=10,iostat=IOSTAT) JDAY, date, HOUR,  
+     &      (CLIMAT(i),i=1,NCD)
+            if (iostat<0) then
+              write(*,*) 'Premature end of weather file'
+              stop
+            endif
            JDAY=julday(date)
 c    SInce some routines need the day of the calendar year we need a variable to hold this
 C    since the julian day is referenced to a time longer in the past
@@ -347,6 +364,8 @@ c model cannot handle freezing temperatures yet
            GAIR(2)=209000    !this is the atmospheric O2 concentration in ppm  
 csb O2 content of air=20.95% by volume, ie; 100 parts of air=20.95 parts of O2
 csb 1 part of air=0.2095 parts of O2. in 10^6 parts of air=0.2095*10^6=209000 ppm
+           GAIR(3)=0.332    !this is the atmospheric N2O concentration in ppm  [IPCC 2021,Technical summary]
+csb N2O concentration in atm 332 ppb=0.33 ppm 
 C
 C      ADJUST UNITS FOR HOURLY DATA
 c      HSR(M) is converted to an hours worth of Watts m-2 (Joules m-2 h-1) 
@@ -1123,14 +1142,14 @@ c................... Gas movement
               do jjj=1,NumG
                   VarBG(i,jjj,2)=GasTransfCoeff(jjj)      ! GasTransfCoeff is the conductance of surface air layer to gas flow or rate constant of the gas exchange between the soil and the atmosphere [cm/day]
                   VarBG(i,jjj,3)=GasTransfCoeff(jjj)   
-     !                *GAIR(jjj)/ppm_to_ugGasCm3air(jjj)  ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!GAIR: is the atmospheric CO2 concentration [ppm], see conversion details in grid_bnd
-                  VarBG(i,jjj,1)=GAIR(jjj)/ppm_to_ugGasCm3air(jjj)           ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!This is if BC=4, is gas content instead of flux
+     !                *GAIR(jjj)/ugGasCm3air_to_ppm(jjj)  ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!GAIR: is the atmospheric CO2 concentration [ppm], see conversion details in grid_bnd
+                  VarBG(i,jjj,1)=GAIR(jjj)/ugGasCm3air_to_ppm(jjj)           ! convert the initial concentration of CO2 in [ppm]  to [ug co2 /cm3 air]!This is if BC=4, is gas content instead of flux
               Enddo
           Endif
           if (K.eq.1.or.K.eq.3.or.k.eq.6) then
               do jjj=1,NumG
                   VarBG(i,jjj,2)=GasTransfCoeff(jjj)   
-                  VarBG(i,jjj,1)= GAIR(jjj)/ppm_to_ugGasCm3air(jjj)          ! convert the atm CO2 in [ppm]  to [ug co2 /cm3 air]
+                  VarBG(i,jjj,1)= GAIR(jjj)/ugGasCm3air_to_ppm(jjj)          ! convert the atm CO2 in [ppm]  to [ug co2 /cm3 air]
               end do
           end if
       Enddo
@@ -1196,7 +1215,12 @@ cccz assign the new wind speed
 c      
       RETURN
 10    call errmes(im,il)
-      write(*,*) "Error in Weather File"
+      write(*,*) "Error in Weather File- either no more data or 
+     &  error in one of the records"
+      Stop
+ 9    Call ErrMes(im,il)
+      write(*,*) "cannot find weather file"
+      stop
       END
 C
      

@@ -1,0 +1,18 @@
+****Script for Irrigation
+[Sprinkler]
+Sprinkler irrigation
+Average irrigation rate (cm/hour)
+ 3 
+Number of irrigation application
+ 0 
+No Irrigation
+[Flood_H]
+Flood irrigation as depth of water (cm)
+Number of flood irrigations as head (cm)
+ 0 
+No flood Irrigation
+[Flood_R]
+Flood irrigation as rate applied (cm/day)
+Number of flood irrigations as rate
+ 0 
+No flood Irrigation
