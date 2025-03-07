@@ -17,7 +17,7 @@ Max Iteration Step (before time step shrinkage) Tolerence for Convergence (%)
 [Mulch_Mass_Properties]
 ********Some Basic Information such as density, porosity and empirical parameters********
 VRho_Mulch g/m3  Pore_Space  Max Held Ponding Depth
- 400000        0.85          1
+ 600000        0.95          5 
 [Mulch_Decomposition]
 ********Overall Factors********
 Contacting_Fraction Feeding_Coef

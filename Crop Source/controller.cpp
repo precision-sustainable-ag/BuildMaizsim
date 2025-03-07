@@ -38,8 +38,8 @@ CController::CController(const char* filename, const char* outfile, const char* 
 	// this is to determine the path and create output file names 
 	// for the debug and summary files
 
-	char* temp =       (char*)calloc(133, sizeof(char));
-	char* pathSymbol = (char*)calloc(133, sizeof(char));
+	char* temp =       (char*)calloc(256, sizeof(char));
+	char* pathSymbol = (char*)calloc(256, sizeof(char));
 	const char *ext_dbg="dbg";
 	std::string stressFile = "plantstress.crp";
 	pathSymbol =(char*) "/\\"; //for both Linux and Windows
@@ -111,8 +111,8 @@ void CController::initialize()
 	cout <<setiosflags(ios::left) << endl
 		<< " ***********************************************************" << endl
 		<< " *          MAIZSIM: A Simulation Model for Corn           *" << endl
-		<< " *                     VERSION  1.8.0.0 2023               *" << endl
-		<< " *                 2DSOIL version 3.0.0.0 2023             *" << endl
+		<< " *                     VERSION  1.8.1 2024                 *" << endl
+		<< " *                 2DSOIL version 3.1.2.0 2024             *" << endl
 		<< " *   USDA-ARS, Adaptive Cropping Sysems Laboratory         *" << endl
 		<< " *   U of Washington, Environmental and Forest Sciences    *" << endl
 		<< " ***********************************************************" << endl

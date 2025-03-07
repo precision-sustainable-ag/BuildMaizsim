@@ -12,7 +12,7 @@
 	Include 'nitvar.ins'
       Include 'PuSurface.ins'
       	
-	character*132 RunDat
+	character*256 RunDat
 	integer len, status
 	RunFile="Run.Dat"	
 	Call get_command_argument(1, RunDat, len, status)
