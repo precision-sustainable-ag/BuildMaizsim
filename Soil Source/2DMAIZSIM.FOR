@@ -46,12 +46,14 @@ c	Call Drip()
       Starter=1.0D0
       Call CROP(PCRL,MSW1, NumNP,NumSol,Sink(1),
      !      NumBP,TNext(1),NumMod,Starter)
-      Call Carbon_Partitioning()   
+
+      Call Carbon_Partitioning()  
       Call Rootgrow()
       call Root_Mover()
       Call WaterUptake()
       Call SoluteUptake()
       Call GasUptake()
+      
       
 c      Call SetBoundary()
 cccz here we start to add surface process

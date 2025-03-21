@@ -362,6 +362,7 @@ void CController::initialize()
     weather = new TWeather[dim];
 
 	plant	= new CPlant(initInfo, GasExParam); //todo send gas exch params here?
+        cout << "created plant" << endl;
 }
 
 

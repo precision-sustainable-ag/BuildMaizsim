@@ -118,9 +118,10 @@ void crop(struct
 		ModNum=module_public->NumMod;
 		
 		time_public->tNext[ModNum-1]=pSC->getSowingDay();
+				
 	} // end if
 	} //end initialization
-
+ 
 	//SK:  Running the crop module step by step
 	if (module_public->NShoot>0)
 	{

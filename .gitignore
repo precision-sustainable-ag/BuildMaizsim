@@ -13,6 +13,7 @@ Maizsim.dll
 Crop Source/Crop.vcxproj
 maizsim
 **/*.$$$
-
+/.vs
+*.sln
 *.out
 *.crp
