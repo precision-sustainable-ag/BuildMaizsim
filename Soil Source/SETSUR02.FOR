@@ -78,7 +78,7 @@ C**                                                                   **
       
       Parameter (PERIOD =1./24.)
       integer jday, m, DayofYear,CurYear, ModNum,ThisYear
-      Common /weather/ il,im,isol,ModNum, TMIN, TMAX,Gamma_psy,
+      Common /weatherD/ il,im,isol,ModNum, TMIN, TMAX,Gamma_psy,
      &   BEERS(24)
       
       double precision St,t
