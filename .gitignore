@@ -11,8 +11,11 @@ Maizsim.dll
 /2DSOIL03.LOG
 *.vcxproj
 Crop Source/Crop.vcxproj
+Crop Source/solar.cp
+Crop Source/solarh
 maizsim
 **/*.$$$
-
+errors.txt
 *.out
 *.crp
+

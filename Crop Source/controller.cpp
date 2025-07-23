@@ -14,7 +14,11 @@
 #define FLOAT_EQ(x,v) (((v - EPSILON) < x) && (x <( v + EPSILON)))
 #endif
 #define comma ","
-#define MINUTESPERDAY (24.0*60.0);
+#ifdef _WIN32
+const char* pathSymbol = "\\";
+#else
+const char* pathSymbol = "/";
+#endif
 
 // const a = 17.27; b = 237.7; //constant in deg C
 inline double E_sat(double T){return 0.6105*exp(17.27*T/(237.7+T));}
@@ -42,18 +46,26 @@ CController::CController(const char* filename, const char* outfile, const char* 
 	char* pathSymbol = (char*)calloc(256, sizeof(char));
 	const char *ext_dbg="dbg";
 	std::string stressFile = "plantstress.crp";
-	pathSymbol =(char*) "/\\"; //for both Linux and Windows
 	std::string basePath;
 	std::size_t found;
 	std::string cropFileAsString = cropFile;
-// find last path separator and break path from file name	
-	found=cropFileAsString.find_last_of(pathSymbol);
-	basePath = cropFileAsString.substr(0, found);
+	std::string fileName;
+	std::string root;
+    // find last path separator and break path from file name	
+	// Find the last occurrence of either '/' or '\\'
+	// works for both linux or windows
+	found = cropFileAsString.find_last_of("/\\");
+	if (found != std::string::npos) {
+		basePath = cropFileAsString.substr(0, found);
+	}
+	else {
+		basePath = "."; // fallback to current directory if no separator found
+	}
 // now get filename to use as a root
-	std::string fileName = cropFileAsString.substr(found + 1);
-	std::string root = fileName.substr(0,fileName.length() - 3);
+	fileName = cropFileAsString.substr(found + 1);
+	root = fileName.substr(0,fileName.length() - 3);
 // create summFile and debug file  names
-// first have to determine if we are linux or windows
+
 	SummFile  = basePath.append("/"+ stressFile);
 	DebugFile = basePath.append("/" + root + ext_dbg);
 
@@ -111,8 +123,8 @@ void CController::initialize()
 	cout <<setiosflags(ios::left) << endl
 		<< " ***********************************************************" << endl
 		<< " *          MAIZSIM: A Simulation Model for Corn           *" << endl
-		<< " *                     VERSION  1.8.1 2024                 *" << endl
-		<< " *                 2DSOIL version 3.1.2.0 2024             *" << endl
+		<< " *                     VERSION  1.8.1 9/22/2024            *" << endl
+		<< " *                 2DSOIL version 3.1.2.0 9/22/2024        *" << endl
 		<< " *   USDA-ARS, Adaptive Cropping Sysems Laboratory         *" << endl
 		<< " *   U of Washington, Environmental and Forest Sciences    *" << endl
 		<< " ***********************************************************" << endl

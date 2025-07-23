@@ -46,7 +46,7 @@ c second new comment
         Close(40)
         NumSol=1
         !Call SetAbio(ew,et,ed,0,0.,0.)
-          Call SetAbio_O2(ew,eO2,et,ed,0,0.,0.,0.D00,0.D00)    
+          Call SetAbio_O2(ew,eO2,et,ed,0,0.,0.,1.D0,0.D0)    
         dtmx(4)=1./24
        Else  ! not the first time step
 C

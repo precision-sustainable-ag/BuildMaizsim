@@ -117,10 +117,10 @@ void crop(struct
 		module_public->NumMod=module_public->NumMod+1 ;
 		ModNum=module_public->NumMod;
 		
-		time_public->tNext[ModNum-1]=pSC->getSowingDay();
+		time_public->tNext[ModNum-1]=pSC->getSowingDay();			
 	} // end if
 	} //end initialization
-
+ 
 	//SK:  Running the crop module step by step
 	if (module_public->NShoot>0)
 	{
@@ -174,6 +174,7 @@ void crop(struct
 				wthr.LeafWP = SHOOTR->LeafWP/10;  //and leaf water potential information into MAIZESIM Yang 8/15/06 MPa
 				wthr.pcrl=SHOOTR->PCRL/PopSlab/24.;
 				wthr.pcrq=SHOOTR->PCRQ/PopSlab/24.;
+
 				//since LeafWP in 2dsoil is in bar but in maizesim is in MPa, so, have to
 				//divide it by 10 to convert it into MPa before passing the value to Maizesim 1 bar=10kPa
 
@@ -331,7 +332,6 @@ void crop(struct
 				else
 				{
 					SHOOTR->PCRL=(pSC->getPlant()->get_rootPart())*24.0*PopSlab;
-					
 				}
 				bool gf = pSC->getPlant()->get_develop()->GrainFillBegan();
 							

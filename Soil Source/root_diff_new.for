@@ -236,7 +236,8 @@ C
                  iii=1
             endif
 CDT 10/10/11 using the max statement here was causing root system to lose mass. I changed it back.           
-          RMassY(i)=sngl(B(i))
+          RMassY(i)=max(1.0e-25,sngl(B(i)))
+		  !RMassY(i)=sngl(B(i))
         Enddo	 
 *
      

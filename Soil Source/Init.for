@@ -239,10 +239,10 @@ c dt
        do i = len, 1, -1
           if ((filename(i:i) == '\').OR.(filename(i:i) == '/')) then
               path = filename(1:i)
-              if (filename(i:i) == '/') then   ! if windows
+              if (filename(i:i) == '/') then   ! if Linux
                   path=path // '/'
                else 
-                 path=path // '\'               ! if linux
+                 path=path // '\'               ! if Windows
               end if
              exit
           end if

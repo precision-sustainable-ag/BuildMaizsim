@@ -3,7 +3,7 @@
 *     2DSOIL  - Numerical model of two-dimensional soil environment    *
 *                           for field crops                            *
 *                                                                      *
-*                              Release 3.1.2.0                              *
+*             Release 3.1.2.0    9/24/2024                             *
 *||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||*
 
       Include 'public.ins'
@@ -46,13 +46,13 @@ c	Call Drip()
       Starter=1.0D0
       Call CROP(PCRL,MSW1, NumNP,NumSol,Sink(1),
      !      NumBP,TNext(1),NumMod,Starter)
-      Call Carbon_Partitioning()   
+      Call Carbon_Partitioning()  
       Call Rootgrow()
       call Root_Mover()
       Call WaterUptake()
       Call SoluteUptake()
       Call GasUptake()
-      
+            
 c      Call SetBoundary()
 cccz here we start to add surface process
 cccz surface mulch (physical perspective)

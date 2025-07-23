@@ -326,7 +326,7 @@ c   dt have to fix this later as model cannot handle freezing temperatures
 CDT
 
       If(MSW6.gt.0) then
-c        Rel_Humid=Climat(4+2*MSW1+MSW2+MSW3+ISOL+MSinSW6)TMIN=max(TMIN,2.0)   
+c        Rel_Humid=Climat(4+2*MSW1+MSW2+MSW3+ISOL+MSW6)TMIN=max(TMIN,2.0)   
          Rel_Humid=min(Climat(4+2*MSW1+MSW2+MSW3+ISOL*MSW4+MSW6)
      &     /100.0,0.98)
           Rel_Humid=max(0.0,Rel_Humid)
